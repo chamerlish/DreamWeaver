@@ -1,0 +1,44 @@
+[gd_scene format=3 uid="uid://dfab3c5gga0n7"]
+
+[sub_resource type="GDScript" id="GDScript_g0qdk"]
+script/source = "extends Area3D
+
+class_name CamSwitchZone
+
+@onready var camera_node: Camera3D = $Camera3D
+
+
+func _on_body_entered(body: Node3D) -> void:
+	if \"Player\" in body.get_groups():
+		camera_node.current = true
+		print(get_viewport().get_camera_3d())
+"
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_g0qdk"]
+size = Vector3(9.680176, 1, 7.3884277)
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_g0qdk"]
+sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
+ground_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
+
+[sub_resource type="Sky" id="Sky_py3rd"]
+sky_material = SubResource("ProceduralSkyMaterial_g0qdk")
+
+[sub_resource type="Environment" id="Environment_py3rd"]
+background_mode = 2
+sky = SubResource("Sky_py3rd")
+tonemap_mode = 2
+glow_enabled = true
+
+[node name="CameraSwitchZone" type="Area3D" unique_id=1032069981]
+script = SubResource("GDScript_g0qdk")
+
+[node name="Camera3D" type="Camera3D" parent="." unique_id=1056721194]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=324266853]
+shape = SubResource("BoxShape3D_g0qdk")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1141151868]
+environment = SubResource("Environment_py3rd")
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]

@@ -13,7 +13,7 @@ height = 1.8
 radius = 0.4
 height = 1.8
 
-[node name="ProtoController" type="CharacterBody3D" unique_id=369957944]
+[node name="Player" type="CharacterBody3D" unique_id=369957944 groups=["Player"]]
 script = ExtResource("1_ucva2")
 
 [node name="Mesh" type="MeshInstance3D" parent="." unique_id=1972942808]

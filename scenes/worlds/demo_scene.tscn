@@ -1,6 +1,42 @@
 [gd_scene format=3 uid="uid://01rk3g3aswrm"]
 
 [ext_resource type="PackedScene" uid="uid://bs72ogkvdd7d6" path="res://scenes/player/player.tscn" id="1_jsoev"]
+[ext_resource type="Texture2D" uid="uid://c38e3pcn5agrc" path="res://resources/textures/environment/aerial_asphalt_01/aerial_asphalt_01_diff_4k.jpg" id="1_of82g"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_am3db"]
+albedo_texture = ExtResource("1_of82g")
+
+[sub_resource type="GDScript" id="GDScript_g0qdk"]
+script/source = "extends Area3D
+
+class_name CamSwitchZone
+
+@onready var camera_node: Camera3D = $Camera3D
+
+
+func _on_body_entered(body: Node3D) -> void:
+	if \"Player\" in body.get_groups():
+		camera_node.current = true
+		print(get_viewport().get_camera_3d())
+"
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_g0qdk"]
+size = Vector3(9.680176, 1, 7.3884277)
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_of82g"]
+sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
+ground_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
+
+[sub_resource type="Sky" id="Sky_am3db"]
+sky_material = SubResource("ProceduralSkyMaterial_of82g")
+
+[sub_resource type="Environment" id="Environment_l6qmh"]
+background_mode = 1
+sky = SubResource("Sky_am3db")
+ambient_light_source = 2
+ambient_light_color = Color(1, 1, 1, 1)
+ambient_light_energy = 0.5
+tonemap_mode = 2
 
 [node name="DemoScene" type="Node3D" unique_id=1150316660]
 
@@ -10,9 +46,33 @@ use_collision = true
 [node name="CSGBox3D" type="CSGBox3D" parent="CSGCombiner3D" unique_id=1051933398]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0011291504, 0, 0.0064775944)
 size = Vector3(9.594299, 1, 7.3847656)
+material = SubResource("StandardMaterial3D_am3db")
 
-[node name="ProtoController" parent="." unique_id=369957944 instance=ExtResource("1_jsoev")]
+[node name="Player" parent="." unique_id=369957944 instance=ExtResource("1_jsoev")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5951549, 0)
 
-[node name="Camera3D" type="Camera3D" parent="." unique_id=486083224]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27830863, 1.4433827, 2)
+[node name="CameraSwitchZone2" type="Area3D" parent="." unique_id=1032069981]
+script = SubResource("GDScript_g0qdk")
+
+[node name="Camera3D" type="Camera3D" parent="CameraSwitchZone2" unique_id=1056721194]
+transform = Transform3D(0.8480481, -0.21722612, 0.48335, 0, 0.9121201, 0.40992305, -0.52991927, -0.34763446, 0.7735217, 2.854, 2.899, 3.445)
+current = true
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="CameraSwitchZone2" unique_id=324266853]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.037353516, 0, 0.020141602)
+shape = SubResource("BoxShape3D_g0qdk")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1149899548]
+transform = Transform3D(-0.8660254, -0.43301278, 0.25, 0, 0.49999997, 0.86602545, -0.50000006, 0.75, -0.43301266, 0, 0, 0)
+shadow_enabled = true
+
+[node name="OmniLight3D" type="OmniLight3D" parent="." unique_id=646916282]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.2940472, 2.3385375, 0)
+visible = false
+shadow_enabled = true
+omni_range = 4096.0
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1877830080]
+environment = SubResource("Environment_l6qmh")
+
+[connection signal="body_entered" from="CameraSwitchZone2" to="CameraSwitchZone2" method="_on_body_entered"]
