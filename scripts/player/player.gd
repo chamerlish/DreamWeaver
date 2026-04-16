@@ -1,15 +1,11 @@
 class_name Player
 extends CharacterBody3D
 
-## Can we move around?
+
 @export var can_move : bool = true
-## Are we affected by gravity?
 @export var has_gravity : bool = true
-## Can we press to jump?
 @export var can_jump : bool = true
-## Can we hold to run?
 @export var can_sprint : bool = false
-## Can we press to enter freefly mode (noclip)?
 @export var can_freefly : bool = false
 
 @export_group("Horizontal Movement")
@@ -78,19 +74,12 @@ var dash_allowed: bool = false
 @export var freefly_speed : float = 25.0
 
 @export_group("Input Actions")
-## Name of Input Action to move Left.
-@export var input_left : String = "ui_left"
-## Name of Input Action to move Right.
-@export var input_right : String = "ui_right"
-## Name of Input Action to move Forward.
-@export var input_forward : String = "ui_up"
-## Name of Input Action to move Backward.
-@export var input_back : String = "ui_down"
-## Name of Input Action to Jump.
-@export var input_jump : String = "ui_accept"
-## Name of Input Action to Sprint.
+@export var input_left : String = "move_left"
+@export var input_right : String = "move_right"
+@export var input_forward : String = "move_up"
+@export var input_back : String = "move_down"
+@export var input_jump : String = "jump"
 @export var input_sprint : String = "sprint"
-## Name of Input Action to toggle freefly mode.
 @export var input_freefly : String = "freefly"
 
 
@@ -175,20 +164,6 @@ func apply_movement(delta: float, acc_time: float, dec_time: float) -> void:
 	velocity.x = current.x
 	velocity.z = current.y
 
-func apply_friction(delta: float, friction: float) -> void:
-	# Get horizontal velocity
-	var horizontal := Vector2(velocity.x, velocity.z)
-	
-	# If we're basically stopped, snap to zero to avoid jitter
-	if horizontal.length() < 0.01:
-		horizontal = Vector2.ZERO
-	else:
-		# Reduce speed based on friction
-		horizontal = horizontal.move_toward(Vector2.ZERO, friction * delta)
-	
-	# Apply back to velocity
-	velocity.x = horizontal.x
-	velocity.z = horizontal.y
 
 func _physics_process(delta: float) -> void:
 	# If freeflying, handle freefly and nothing else
@@ -264,7 +239,7 @@ func jump() -> void:
 	
 
 func try_jump() -> void:
-	if Input.is_action_just_pressed("jump"):
+	if Input.is_action_just_pressed(input_jump):
 		jump()
 
 func try_coyote_jump() -> void:
@@ -272,7 +247,7 @@ func try_coyote_jump() -> void:
 		try_jump()
 
 func try_jump_buffer_timer() -> void:
-	if Input.is_action_just_pressed("jump"):
+	if Input.is_action_just_pressed(input_jump):
 		jump_buffer_timer.start()
 
 func try_buffer_jump() -> void:

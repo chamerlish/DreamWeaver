@@ -5,6 +5,7 @@
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_am3db"]
 albedo_texture = ExtResource("1_of82g")
+uv1_triplanar = true
 
 [sub_resource type="GDScript" id="GDScript_g0qdk"]
 script/source = "extends Area3D
@@ -44,8 +45,8 @@ tonemap_mode = 2
 use_collision = true
 
 [node name="CSGBox3D" type="CSGBox3D" parent="CSGCombiner3D" unique_id=1051933398]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0011291504, 0, 0.0064775944)
-size = Vector3(9.594299, 1, 7.3847656)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0011291504, 0, -4.428337)
+size = Vector3(9.594299, 1, 16.254395)
 material = SubResource("StandardMaterial3D_am3db")
 
 [node name="Player" parent="." unique_id=369957944 instance=ExtResource("1_jsoev")]

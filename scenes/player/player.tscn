@@ -22,6 +22,37 @@ height = 1.8
 
 [node name="Player" type="CharacterBody3D" unique_id=369957944 groups=["Player"]]
 script = ExtResource("1_ucva2")
+max_speed = 25.0
+max_ground_velocity_ratio = 3.0
+running_acc_time = 0.188
+running_dec_time = 0.171
+jumping_acc_time = 0.221
+jumping_dec_time = 0.234
+falling_acc_time = 0.234
+falling_dec_time = 0.25
+jump_not_held_gravity_ratio = 1.6
+down_held_gravity_ratio = 2.0
+gravity_limit = 1000.0
+jump_height = 112.0
+jump_time_to_peak = 0.4
+jump_time_to_land = 0.3
+max_up_velocity_ratio = 3.0
+jump_peak_boost = 100.0
+jump_peak_gravity_ratio = 0.7
+corner_correction_distance = 8
+oneway_platform_assist_distance = 4
+max_wall_slide_speed = 200.0
+down_held_wall_slide_ratio = 2.0
+wall_slide_acc_time = 0.067
+wall_jump_v_velocity_ratio = 0.8
+wall_jump_h_velocity = 400.0
+wall_jumping_acc_time = 0.221
+wall_jumping_dec_time = 0.234
+wall_jumping_towards_wall_dec_time = 0.289
+dash_speed = 1200.0
+dash_distance = 125.0
+after_dash_speed = 300.0
+after_dash_gravity_ratio = 0.2
 
 [node name="Mesh" type="MeshInstance3D" parent="." unique_id=1972942808]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
