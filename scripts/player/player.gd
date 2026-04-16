@@ -1,8 +1,4 @@
-# ProtoController v1.0 by Brackeys
-# CC0 License
-# Intended for rapid prototyping of first-person games.
-# Happy prototyping!
-
+class_name Player
 extends CharacterBody3D
 
 ## Can we move around?
@@ -15,6 +11,59 @@ extends CharacterBody3D
 @export var can_sprint : bool = false
 ## Can we press to enter freefly mode (noclip)?
 @export var can_freefly : bool = false
+
+@export_group("Horizontal Movement")
+@export var max_speed: float = 0.01
+@export_range(1.0, 5.0) var max_ground_velocity_ratio: float # Multiplied by max_speed
+
+@export_subgroup("On Floor")
+@export_range(0.0, 1.0) var running_acc_time: float
+@export_range(0.0, 1.0) var running_dec_time: float
+
+@export_subgroup("In Air")
+@export_range(0.0, 1.0) var jumping_acc_time: float
+@export_range(0.0, 1.0) var jumping_dec_time: float
+@export_range(0.0, 1.0) var falling_acc_time: float
+@export_range(0.0, 1.0) var falling_dec_time: float
+
+@export_group("Vertical Movement")
+@export_subgroup("Gravity")
+@export_range(1.0, 2.0) var jump_not_held_gravity_ratio: float
+@export_range(1.0, 2.0) var down_held_gravity_ratio: float
+@export var gravity_limit: float
+@export_range(1.0, 2.0) var down_held_gravity_limit_ratio: float
+
+@export_subgroup("Jump")
+@export var jump_height: float
+@export_range(0.0, 1.0) var jump_time_to_peak: float
+@export_range(0.0, 1.0) var jump_time_to_land: float
+@export_range(1.0, 5.0) var max_up_velocity_ratio: float # Multiplied by jump_velocity
+@export var jump_peak_boost: float # Boost applied to horizontal velocity after reaching jump peak
+@export_range(0.0, 1.0) var jump_peak_gravity_ratio: float
+@export var corner_correction_distance: int
+@export var oneway_platform_assist_distance: int
+
+@export_group("On Wall")
+@export_subgroup("Wall Slide")
+@export var max_wall_slide_speed: float
+@export_range(1.0, 2.0) var down_held_wall_slide_ratio: float
+@export_range(0.0, 1.0) var wall_slide_acc_time: float # Downward acceleration
+
+@export_subgroup("Wall Jump")
+@export_range(0.0, 1.0) var wall_jump_v_velocity_ratio: float # Multiplied by jump_velocity
+@export var wall_jump_h_velocity: float
+# Horizontal acceleration/deceleration after wall jumping.
+@export_range(0.0, 1.0) var wall_jumping_acc_time: float
+@export_range(0.0, 1.0) var wall_jumping_dec_time: float
+@export_range(0.0, 1.0) var wall_jumping_towards_wall_dec_time: float # While the player is moving towards the wall
+
+@export_group("Dash")
+@export var dash_speed: float
+@export var dash_distance: float
+@export var after_dash_speed: float
+@export_range(0.0, 1.0) var after_dash_gravity_ratio: float
+
+var dash_allowed: bool = false
 
 @export_group("Speeds")
 ## Look around rotation speed.
@@ -44,6 +93,20 @@ extends CharacterBody3D
 ## Name of Input Action to toggle freefly mode.
 @export var input_freefly : String = "freefly"
 
+
+## TIMERS
+@onready var jump_peak_gravity_timer: Timer = %JumpPeakGravity as Timer
+@onready var jump_coyote_timer: Timer = %JumpCoyote as Timer
+@onready var jump_buffer_timer: Timer = %JumpBuffer as Timer
+@onready var wall_jump_coyote_timer: Timer = %WallJumpCoyote as Timer
+@onready var wall_jump_buffer_timer: Timer = %WallJumpBuffer as Timer
+@onready var dash_cooldown_timer: Timer = %DashCooldown as Timer
+@onready var after_dash_gravity_timer: Timer = %AfterDashGravity as Timer
+
+
+@onready var max_ground_velocity: float = max_speed * max_ground_velocity_ratio
+
+
 var mouse_captured : bool = false
 var look_rotation : Vector2
 var move_speed : float = 0.0
@@ -65,6 +128,68 @@ func _unhandled_input(event: InputEvent) -> void:
 		else:
 			disable_freefly()
 
+func apply_gravity(delta: float):
+	# Apply gravity to velocity
+	if has_gravity:
+		if not is_on_floor():
+			velocity += get_gravity() * delta
+
+func get_input_vector() -> Vector2:
+	return Input.get_vector(input_left, input_right, input_forward, input_back)
+
+func apply_movement(delta: float, acc_time: float, dec_time: float) -> void:
+	if not can_move:
+		velocity.x = 0
+		velocity.z = 0
+		return
+	
+
+	
+	var input_vec := get_input_vector()
+	
+	# Convert input into world-space movement direction
+	var move_dir := (transform.basis * Vector3(input_vec.x, 0, input_vec.y)).normalized()
+	
+	# Calculate desired velocity based on movement direction and speed
+	var target_velocity := move_dir * move_speed
+
+	# Extract current horizontal velocity (ignore Y axis)
+	var current := Vector2(velocity.x, velocity.z)
+	var target := Vector2(target_velocity.x, target_velocity.z)
+
+	# Decide whether to accelerate or decelerate
+	# - Accelerate if standing still
+	# - Or if changing direction (dot <= 0 means opposite-ish direction)
+	var apply_acc := current.length() == 0.0 or current.dot(target - current) <= 0.0
+	
+	# Pick the correct time (acceleration vs deceleration)
+	var time: float = max(acc_time if apply_acc else dec_time, 0.001)
+	
+	# How fast we move toward the target velocity
+	var step := max_speed / time
+
+	# Smoothly move current velocity toward target velocity
+	current = current.move_toward(target, step * delta)
+
+	# Apply the result back to 3D velocity
+	velocity.x = current.x
+	velocity.z = current.y
+
+func apply_friction(delta: float, friction: float) -> void:
+	# Get horizontal velocity
+	var horizontal := Vector2(velocity.x, velocity.z)
+	
+	# If we're basically stopped, snap to zero to avoid jitter
+	if horizontal.length() < 0.01:
+		horizontal = Vector2.ZERO
+	else:
+		# Reduce speed based on friction
+		horizontal = horizontal.move_toward(Vector2.ZERO, friction * delta)
+	
+	# Apply back to velocity
+	velocity.x = horizontal.x
+	velocity.z = horizontal.y
+
 func _physics_process(delta: float) -> void:
 	# If freeflying, handle freefly and nothing else
 	if can_freefly and freeflying:
@@ -73,16 +198,7 @@ func _physics_process(delta: float) -> void:
 		motion *= freefly_speed * delta
 		move_and_collide(motion)
 		return
-	
-	# Apply gravity to velocity
-	if has_gravity:
-		if not is_on_floor():
-			velocity += get_gravity() * delta
 
-	# Apply jumping
-	if can_jump:
-		if Input.is_action_just_pressed(input_jump) and is_on_floor():
-			velocity.y = jump_velocity
 
 	# Modify speed based on sprinting
 	if can_sprint and Input.is_action_pressed(input_sprint):
@@ -90,33 +206,11 @@ func _physics_process(delta: float) -> void:
 	else:
 		move_speed = base_speed
 
-	# Apply desired movement to velocity
-	if can_move:
-		var input_dir := Input.get_vector(input_left, input_right, input_forward, input_back)
-		var move_dir := (transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
-		if move_dir:
-			velocity.x = move_dir.x * move_speed
-			velocity.z = move_dir.z * move_speed
-		else:
-			velocity.x = move_toward(velocity.x, 0, move_speed)
-			velocity.z = move_toward(velocity.z, 0, move_speed)
-	else:
-		velocity.x = 0
-		velocity.y = 0
+	
 	
 	# Use velocity to actually move
 	move_and_slide()
 
-
-## Rotate us to look around.
-## Base of controller rotates around y (left/right). Head rotates around x (up/down).
-## Modifies look_rotation based on rot_input, then resets basis and rotates by look_rotation.
-func rotate_look(rot_input : Vector2):
-	look_rotation.x -= rot_input.y * look_speed
-	look_rotation.x = clamp(look_rotation.x, deg_to_rad(-85), deg_to_rad(85))
-	look_rotation.y -= rot_input.x * look_speed
-	transform.basis = Basis()
-	rotate_y(look_rotation.y)
 
 
 func enable_freefly():
@@ -163,3 +257,33 @@ func check_input_mappings():
 	if can_freefly and not InputMap.has_action(input_freefly):
 		push_error("Freefly disabled. No InputAction found for input_freefly: " + input_freefly)
 		can_freefly = false
+
+
+func jump() -> void:
+	velocity.y = jump_velocity
+	
+
+func try_jump() -> void:
+	if Input.is_action_just_pressed("jump"):
+		jump()
+
+func try_coyote_jump() -> void:
+	if not jump_coyote_timer.is_stopped():
+		try_jump()
+
+func try_jump_buffer_timer() -> void:
+	if Input.is_action_just_pressed("jump"):
+		jump_buffer_timer.start()
+
+func try_buffer_jump() -> void:
+	if not jump_buffer_timer.is_stopped():
+		jump()
+
+func try_dash() -> void:
+	return
+
+func stop_jump_timers() -> void:
+	jump_coyote_timer.stop()
+	jump_buffer_timer.stop()
+	wall_jump_coyote_timer.stop()
+	wall_jump_buffer_timer.stop()

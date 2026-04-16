@@ -49,7 +49,7 @@ size = Vector3(9.594299, 1, 7.3847656)
 material = SubResource("StandardMaterial3D_am3db")
 
 [node name="Player" parent="." unique_id=369957944 instance=ExtResource("1_jsoev")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5951549, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5.007968, 0)
 
 [node name="CameraSwitchZone2" type="Area3D" parent="." unique_id=1032069981]
 script = SubResource("GDScript_g0qdk")
