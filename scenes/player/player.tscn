@@ -20,6 +20,12 @@ height = 1.8
 radius = 0.4
 height = 1.8
 
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_qek5x"]
+albedo_color = Color(0, 0, 0, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_5gtgg"]
+material = SubResource("StandardMaterial3D_qek5x")
+
 [node name="Player" type="CharacterBody3D" unique_id=369957944 groups=["Player"]]
 script = ExtResource("1_ucva2")
 max_speed = 25.0
@@ -137,3 +143,7 @@ unique_name_in_owner = true
 process_callback = 0
 wait_time = 0.1
 one_shot = true
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=2217502]
+transform = Transform3D(-6.948068e-09, 0, 0.6132065, 0, 0.35283127, 0, -0.15895326, 0, -2.6804107e-08, 0, 1.398, 0.3556022)
+mesh = SubResource("BoxMesh_5gtgg")

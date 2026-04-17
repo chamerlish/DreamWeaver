@@ -50,7 +50,7 @@ size = Vector3(9.594299, 1, 16.254395)
 material = SubResource("StandardMaterial3D_am3db")
 
 [node name="Player" parent="." unique_id=369957944 instance=ExtResource("1_jsoev")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5.007968, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.567306, 0)
 
 [node name="CameraSwitchZone2" type="Area3D" parent="." unique_id=1032069981]
 script = SubResource("GDScript_g0qdk")
@@ -60,6 +60,18 @@ transform = Transform3D(0.8480481, -0.21722612, 0.48335, 0, 0.9121201, 0.4099230
 current = true
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="CameraSwitchZone2" unique_id=324266853]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.037353516, 0, 0.020141602)
+shape = SubResource("BoxShape3D_g0qdk")
+
+[node name="CameraSwitchZone3" type="Area3D" parent="." unique_id=1753108055]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.8490436, 0, -5.156687)
+visible = false
+script = SubResource("GDScript_g0qdk")
+
+[node name="Camera3D" type="Camera3D" parent="CameraSwitchZone3" unique_id=1835940475]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0.62346053, 5.900263, 3.4484997)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="CameraSwitchZone3" unique_id=489918108]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.037353516, 0, 0.020141602)
 shape = SubResource("BoxShape3D_g0qdk")
 
@@ -77,3 +89,4 @@ omni_range = 4096.0
 environment = SubResource("Environment_l6qmh")
 
 [connection signal="body_entered" from="CameraSwitchZone2" to="CameraSwitchZone2" method="_on_body_entered"]
+[connection signal="body_entered" from="CameraSwitchZone3" to="CameraSwitchZone3" method="_on_body_entered"]
