@@ -87,6 +87,8 @@ var dash_allowed: bool = false
 
 @onready var max_ground_velocity: float = max_speed * max_ground_velocity_ratio
 
+@onready var floor_indicator: PositionIndicator = preload("res://scenes/ui/props/position_indicator.tscn").instantiate()
+
 var mouse_captured : bool = false
 var look_rotation : Vector2
 var move_speed : float = 0.0
@@ -98,6 +100,8 @@ var freeflying : bool = false
 func _ready() -> void:
 	check_input_mappings()
 	look_rotation.y = rotation.y
+	get_parent().add_child.call_deferred(floor_indicator)
+	floor_indicator.color = Color.DEEP_SKY_BLUE
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -117,7 +121,7 @@ func get_input_vector() -> Vector2:
 	return Input.get_vector(input_left, input_right, input_forward, input_back)
 
 
-func apply_movement(delta: float, acc_time: float, dec_time: float) -> void:
+func apply_movement(delta: float) -> void:
 	var input_vec := get_input_vector()
 	
 	if not can_move or input_vec == Vector2.ZERO:
@@ -125,17 +129,17 @@ func apply_movement(delta: float, acc_time: float, dec_time: float) -> void:
 		velocity.z = 0.0
 		return
 
-	var move_dir := (transform.basis * Vector3(input_vec.x, 0, input_vec.y)).normalized()
-	var target_velocity := move_dir * move_speed
+	#var move_dir := (transform.basis * Vector3(input_vec.x, 0, input_vec.y)).normalized()
+	#var target_velocity := move_dir * move_speed
 
-	var current := Vector2(velocity.x, velocity.z)
-	var target := Vector2(target_velocity.x, target_velocity.z)
+	#var current := Vector2(velocity.x, velocity.z)
+	#var target := Vector2(target_velocity.x, target_velocity.z)
 
-	var apply_acc := current == Vector2.ZERO or current.dot(target - current) <= 0.0
-	var time := maxf(acc_time if apply_acc else dec_time, 0.001)
-	var step := max_speed / time
+	#var apply_acc := current == Vector2.ZERO or current.dot(target - current) <= 0.0
+	#var time := maxf(acc_time if apply_acc else dec_time, 0.001)
+	#var step := max_speed / time
 
-	current = current.move_toward(target, step * delta)
+	#current = current.move_toward(target, step * delta)
 	
 	var z_forward = transform.basis.z
 
@@ -150,6 +154,11 @@ func look_at_dir() -> void:
 
 
 func _physics_process(delta: float) -> void:
+	
+	if track_floor() != Vector3.INF:
+		floor_indicator.global_position = track_floor()
+	print(floor_indicator.global_position)
+	
 	if freeflying and can_freefly:
 		var input_dir := Input.get_vector(input_left, input_right, input_forward, input_back)
 		if input_dir != Vector2.ZERO:
@@ -246,3 +255,12 @@ func stop_jump_timers() -> void:
 	jump_buffer_timer.stop()
 	wall_jump_coyote_timer.stop()
 	wall_jump_buffer_timer.stop()
+
+
+@onready var floor_raycast: RayCast3D = $FloorRaycast
+
+func track_floor() -> Vector3:
+	floor_raycast.force_raycast_update()
+	if floor_raycast.is_colliding():
+		return floor_raycast.get_collision_point() + Vector3(0, 0.1, 0)
+	return Vector3.INF

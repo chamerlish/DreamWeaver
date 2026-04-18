@@ -1,0 +1,10 @@
+[gd_scene format=3 uid="uid://b8myhxsr0t253"]
+
+[ext_resource type="Texture2D" uid="uid://4j640dbx73xt" path="res://resources/textures/ui/props/position_indicator.png" id="1_o8vce"]
+[ext_resource type="Script" uid="uid://14l876ns10ac" path="res://scripts/ui/props/position_indicator.gd" id="2_fb4ev"]
+
+[node name="PositionIndicator" type="Sprite3D" unique_id=627486979]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0)
+texture_filter = 0
+texture = ExtResource("1_o8vce")
+script = ExtResource("2_fb4ev")

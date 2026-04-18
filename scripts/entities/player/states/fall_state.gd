@@ -12,7 +12,7 @@ func _enter(previous_state: State) -> void:
 
 func _physics_update(delta: float) -> void:
 	player.apply_gravity(delta)
-	player.apply_movement(delta, player.falling_acc_time, player.falling_dec_time)
+	player.apply_movement(delta)
 	player.try_coyote_jump()
 	player.try_jump_buffer_timer()
 	# player.try_wall_slide()
@@ -21,6 +21,8 @@ func _physics_update(delta: float) -> void:
 	# player.try_wall_jump_buffer_timer()
 	player.try_dash()
 	player.move_and_slide()
+	
+	
 	
 	if player.velocity.y < 0:
 		switch_to("JumpState")

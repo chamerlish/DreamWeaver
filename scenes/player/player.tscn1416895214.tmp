@@ -146,7 +146,6 @@ one_shot = true
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=2217502]
 transform = Transform3D(-6.948068e-09, 0, 0.6132065, 0, 0.35283127, 0, -0.15895326, 0, -2.6804107e-08, 0, 1.398, 0.3556022)
-cast_shadow = 0
 mesh = SubResource("BoxMesh_5gtgg")
 
 [node name="FloorRaycast" type="RayCast3D" parent="." unique_id=1339160303]
