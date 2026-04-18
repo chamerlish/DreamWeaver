@@ -62,7 +62,7 @@ var dash_allowed: bool = false
 
 @export_group("Speeds")
 @export var look_speed : float = 0.002
-@export var base_speed : float = 7.0
+@export var base_speed : float = 200.0
 @export var jump_velocity : float = 4.5
 @export var sprint_speed : float = 10.0
 @export var freefly_speed : float = 25.0
@@ -90,7 +90,6 @@ var dash_allowed: bool = false
 @onready var floor_indicator: PositionIndicator = preload("res://scenes/ui/props/position_indicator.tscn").instantiate()
 
 var mouse_captured : bool = false
-var look_rotation : Vector2
 var move_speed : float = 0.0
 var freeflying : bool = false
 
@@ -99,7 +98,6 @@ var freeflying : bool = false
 
 func _ready() -> void:
 	check_input_mappings()
-	look_rotation.y = rotation.y
 	get_parent().add_child.call_deferred(floor_indicator)
 	floor_indicator.color = Color.DEEP_SKY_BLUE
 
@@ -132,8 +130,8 @@ func apply_movement(delta: float) -> void:
 	
 	var z_forward = transform.basis.z
 
-	velocity.x = z_forward.x
-	velocity.z = z_forward.z
+	velocity.x = z_forward.x * move_speed * delta
+	velocity.z = z_forward.z * move_speed * delta
 
 
 func look_at_dir() -> void:
