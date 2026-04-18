@@ -114,7 +114,7 @@ func _unhandled_input(event: InputEvent) -> void:
 
 func apply_gravity(delta: float) -> void:
 	if has_gravity and not is_on_floor():
-		velocity.y += get_gravity().y * delta
+		velocity.y += get_gravity().y * delta * 2
 
 
 func get_input_vector() -> Vector2:
@@ -129,17 +129,6 @@ func apply_movement(delta: float) -> void:
 		velocity.z = 0.0
 		return
 
-	#var move_dir := (transform.basis * Vector3(input_vec.x, 0, input_vec.y)).normalized()
-	#var target_velocity := move_dir * move_speed
-
-	#var current := Vector2(velocity.x, velocity.z)
-	#var target := Vector2(target_velocity.x, target_velocity.z)
-
-	#var apply_acc := current == Vector2.ZERO or current.dot(target - current) <= 0.0
-	#var time := maxf(acc_time if apply_acc else dec_time, 0.001)
-	#var step := max_speed / time
-
-	#current = current.move_toward(target, step * delta)
 	
 	var z_forward = transform.basis.z
 
@@ -148,6 +137,7 @@ func apply_movement(delta: float) -> void:
 
 
 func look_at_dir() -> void:
+	
 	var input_dir := get_input_vector()
 	if input_dir != Vector2.ZERO:
 		rotation.y = atan2(input_dir.x, input_dir.y)
@@ -157,24 +147,21 @@ func _physics_process(delta: float) -> void:
 	
 	if track_floor() != Vector3.INF:
 		floor_indicator.global_position = track_floor()
-	print(floor_indicator.global_position)
 	
-	if freeflying and can_freefly:
-		var input_dir := Input.get_vector(input_left, input_right, input_forward, input_back)
-		if input_dir != Vector2.ZERO:
-			var motion := Vector3(input_dir.x, 0, input_dir.y).normalized() * freefly_speed * delta
-			move_and_collide(motion)
-		return
+	
+	#if freeflying and can_freefly:
+	#	var input_dir := Input.get_vector(input_left, input_right, input_forward, input_back)
+	#	if input_dir != Vector2.ZERO:
+	#		var motion := Vector3(input_dir.x, 0, input_dir.y).normalized() * freefly_speed * delta
+	#		move_and_collide(motion)
+	#	return
 
-	look_at_dir()
-	apply_gravity(delta)
+	
 
 	if can_sprint and Input.is_action_pressed(input_sprint):
 		move_speed = sprint_speed
 	else:
 		move_speed = base_speed
-
-	move_and_slide()
 
 
 func enable_freefly() -> void:
