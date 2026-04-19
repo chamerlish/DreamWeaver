@@ -7,6 +7,5 @@ func _enter(previous_state: State) -> void:
 	else:
 		switch_to("JumpState", previous_state)
 	
-	print(player.track_floor())
 	
 	player.stop_jump_timers()

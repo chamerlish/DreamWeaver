@@ -8,6 +8,8 @@
 [ext_resource type="Script" uid="uid://b6w2sn3ikefko" path="res://scripts/entities/player/states/floor_entry_state.gd" id="6_je7p5"]
 [ext_resource type="Script" uid="uid://bgrdchyvffn8v" path="res://scripts/entities/player/states/run_state.gd" id="7_fm80t"]
 [ext_resource type="Script" uid="uid://m06e3ohv0ud1" path="res://scripts/entities/player/states/idle_state.gd" id="7_qek5x"]
+[ext_resource type="Script" uid="uid://d2tvcxadrd32c" path="res://scripts/entities/player/states/dash_prepare_state.gd" id="9_5gtgg"]
+[ext_resource type="Script" uid="uid://crbn04ab1d1vk" path="res://scripts/entities/player/states/dash_state.gd" id="10_h17s1"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_iof21"]
 albedo_color = Color(0.91806, 0.575202, 0.222449, 1)
@@ -56,8 +58,6 @@ wall_jumping_acc_time = 0.221
 wall_jumping_dec_time = 0.234
 wall_jumping_towards_wall_dec_time = 0.289
 dash_speed = 1200.0
-dash_distance = 125.0
-after_dash_speed = 300.0
 after_dash_gravity_ratio = 0.2
 
 [node name="Mesh" type="MeshInstance3D" parent="." unique_id=1972942808]
@@ -99,6 +99,14 @@ metadata/_custom_type_script = "uid://m06e3ohv0ud1"
 [node name="RunState" type="Node" parent="StateMachine/FloorEntryState" unique_id=1635698838]
 script = ExtResource("7_fm80t")
 metadata/_custom_type_script = "uid://bgrdchyvffn8v"
+
+[node name="DashPrepareState" type="Node" parent="StateMachine" unique_id=1651392896]
+script = ExtResource("9_5gtgg")
+metadata/_custom_type_script = "uid://d2tvcxadrd32c"
+
+[node name="DashState" type="Node" parent="StateMachine" unique_id=423400344]
+script = ExtResource("10_h17s1")
+metadata/_custom_type_script = "uid://crbn04ab1d1vk"
 
 [node name="Timers" type="Node" parent="." unique_id=1661881200]
 
@@ -151,3 +159,6 @@ mesh = SubResource("BoxMesh_5gtgg")
 
 [node name="FloorRaycast" type="RayCast3D" parent="." unique_id=1339160303]
 target_position = Vector3(0, -6, 0)
+
+[node name="DashPoint" type="Marker3D" parent="." unique_id=1442484643]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.7524155, 1.7108276)

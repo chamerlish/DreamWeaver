@@ -54,11 +54,10 @@ extends CharacterBody3D
 
 @export_group("Dash")
 @export var dash_speed: float
-@export var dash_distance: float
-@export var after_dash_speed: float
+@export var dash_power: float = 10
 @export_range(0.0, 1.0) var after_dash_gravity_ratio: float
 
-var dash_allowed: bool = false
+var dash_allowed: bool = true
 
 @export_group("Speeds")
 @export var look_speed : float = 0.002
@@ -94,7 +93,7 @@ var move_speed : float = 0.0
 var freeflying : bool = false
 
 @onready var collider: CollisionShape3D = $Collider
-
+@onready var state_machine: StateMachine = $StateMachine as StateMachine
 
 func _ready() -> void:
 	check_input_mappings()
@@ -207,6 +206,35 @@ func check_input_mappings() -> void:
 		can_freefly = false
 
 
+#region DASH
+
+@onready var dash_point: Marker3D = $DashPoint
+
+var dash_distance: float = 3
+
+func can_dash() -> bool:
+	return dash_allowed and dash_cooldown_timer.is_stopped()
+
+func try_dash() -> void:
+	if Input.is_action_just_pressed("dash") and can_dash():
+		state_machine.activate_state_by_name.call_deferred("DashPrepareState")
+
+func start_dash() -> void:
+	var direction = transform.basis.z
+	var horizontal_force = direction * dash_power
+	
+	velocity.x = horizontal_force.x
+	velocity.z = horizontal_force.z
+	dash_allowed = false
+	
+
+func stop_dash():
+	velocity.z = 0
+	velocity.x = 0
+	dash_allowed = true
+
+#endregion
+
 func jump() -> void:
 	velocity.y = jump_velocity
 
@@ -229,10 +257,6 @@ func try_jump_buffer_timer() -> void:
 func try_buffer_jump() -> void:
 	if not jump_buffer_timer.is_stopped():
 		jump()
-
-
-func try_dash() -> void:
-	pass
 
 
 func stop_jump_timers() -> void:
