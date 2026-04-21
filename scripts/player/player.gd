@@ -117,9 +117,19 @@ func apply_gravity(delta: float) -> void:
 func get_input_vector() -> Vector2:
 	return Input.get_vector(input_left, input_right, input_forward, input_back)
 
+func get_camera_yaw() -> Basis:
+	var cam := get_viewport().get_camera_3d()
+	var basis := cam.global_transform.basis
 
+	# flatten to XZ plane (important for top-down / pitch cameras)
+	basis.y = Vector3.UP
+	basis.x = basis.x.normalized()
+	basis.z = basis.z.normalized()
+
+	return basis
+	
 func apply_movement(delta: float) -> void:
-	var input_vec := get_input_vector()
+	var input_vec := get_input_vector() 
 	
 	if not can_move or input_vec == Vector2.ZERO:
 		velocity.x = 0.0
@@ -133,12 +143,36 @@ func apply_movement(delta: float) -> void:
 	velocity.z = z_forward.z * move_speed * delta
 
 
-func look_at_dir() -> void:
-	
-	var input_dir := get_input_vector()
-	if input_dir != Vector2.ZERO:
-		rotation.y = atan2(input_dir.x, input_dir.y)
+var current_cam_yaw: float
 
+func look_at_dir() -> void:
+	var input_dir := get_input_vector()
+	var cam := get_viewport().get_camera_3d()
+
+	var cam_yaw: float = cam.global_transform.basis.get_euler().y
+	
+	if input_dir == Vector2.ZERO:
+		current_cam_yaw = cam_yaw
+		return
+	
+	var forward := Vector3(
+		sin(current_cam_yaw),
+		0,
+		cos(current_cam_yaw)
+	)
+
+	var right := Vector3(
+		cos(current_cam_yaw),
+		0,
+		-sin(current_cam_yaw)
+	)
+
+	var dir := right * -input_dir.x + forward * -input_dir.y
+
+	if dir.length() == 0:
+		return
+
+	look_at(global_position + dir.normalized(), Vector3.UP)
 
 func _physics_process(delta: float) -> void:
 	

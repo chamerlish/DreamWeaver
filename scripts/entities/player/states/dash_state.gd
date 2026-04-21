@@ -37,8 +37,6 @@ func _physics_update(_delta: float) -> void:
 	player.move_and_slide()
 	player.start_dash()
 	
-	print(start_pos.distance_to(player.global_position))
-	
 	#if (player.global_position.distance_to(end_pos) <= 0.1
 	#	or player.is_on_wall()
 	#):

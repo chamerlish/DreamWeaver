@@ -37,10 +37,10 @@ func _on_body_entered(body: Node3D) -> void:
 "
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_g0qdk"]
-size = Vector3(10.0095215, 4.385803, 6)
+size = Vector3(10.0095215, 4.385803, 7.538208)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_of82g"]
-size = Vector3(10.001343, 4.2875977, 7.3884277)
+size = Vector3(10.001343, 4.2875977, 6.33374)
 
 [node name="DemoScene" type="Node3D" unique_id=1150316660]
 
@@ -100,7 +100,7 @@ transform = Transform3D(-0.49697405, 0.1996292, 0.84449095, 0, 0.97317886, -0.23
 current = true
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="CAMERAS/CameraSwitchZone4" unique_id=537051836]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.037353516, 2.3102112, 0.71435547)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.037353516, 2.3102112, 1.4834595)
 shape = SubResource("BoxShape3D_g0qdk")
 
 [node name="CameraSwitchZone3" type="Area3D" parent="CAMERAS" unique_id=1753108055]
@@ -111,7 +111,7 @@ script = SubResource("GDScript_g0qdk")
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0.62346053, 5.900263, 1.2598968)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="CAMERAS/CameraSwitchZone3" unique_id=489918108]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.12322998, 1.6437988, 0.020141602)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.12322998, 1.6437988, -0.50720215)
 shape = SubResource("BoxShape3D_of82g")
 
 [connection signal="body_entered" from="CAMERAS/CameraSwitchZone2" to="CAMERAS/CameraSwitchZone2" method="_on_body_entered"]
