@@ -86,7 +86,6 @@ var dash_allowed: bool = true
 
 @onready var max_ground_velocity: float = max_speed * max_ground_velocity_ratio
 
-@onready var floor_indicator: PositionIndicator = preload("res://scenes/ui/props/position_indicator.tscn").instantiate()
 
 var mouse_captured : bool = false
 var move_speed : float = 0.0
@@ -95,11 +94,14 @@ var freeflying : bool = false
 @onready var collider: CollisionShape3D = $Collider
 @onready var state_machine: StateMachine = $StateMachine as StateMachine
 
+
+var position_indicator: PackedScene = preload("res://scenes/ui/props/position_indicator.tscn")
+var floor_indicator: PositionIndicator = position_indicator.instantiate()
+
 func _ready() -> void:
 	check_input_mappings()
 	get_parent().add_child.call_deferred(floor_indicator)
 	floor_indicator.color = Color.DEEP_SKY_BLUE
-
 
 func _unhandled_input(event: InputEvent) -> void:
 	if can_freefly and Input.is_action_just_pressed(input_freefly):
@@ -174,21 +176,16 @@ func look_at_dir() -> void:
 
 	look_at(global_position + dir.normalized(), Vector3.UP)
 
+func show_landing_pos(floor_ind: PositionIndicator) -> void:
+	if track_floor() != Vector3.INF and !is_on_floor():
+		floor_ind.show()
+		floor_ind.global_position = track_floor()
+	else:
+		floor_ind.hide()
+
+
 func _physics_process(delta: float) -> void:
 	
-	if track_floor() != Vector3.INF:
-		floor_indicator.global_position = track_floor()
-	
-	
-	#if freeflying and can_freefly:
-	#	var input_dir := Input.get_vector(input_left, input_right, input_forward, input_back)
-	#	if input_dir != Vector2.ZERO:
-	#		var motion := Vector3(input_dir.x, 0, input_dir.y).normalized() * freefly_speed * delta
-	#		move_and_collide(motion)
-	#	return
-
-	
-
 	if can_sprint and Input.is_action_pressed(input_sprint):
 		move_speed = sprint_speed
 	else:
@@ -246,6 +243,17 @@ func check_input_mappings() -> void:
 
 var dash_distance: float = 3
 
+func _track_dash() -> Vector3:
+	var floor_raycast: RayCast3D = dash_point.get_node("DashRaycast")
+	floor_raycast.force_raycast_update()
+	if floor_raycast.is_colliding():
+		return floor_raycast.get_collision_point() + Vector3(0, 0.1, 0)
+	return Vector3.INF
+
+func show_dash_pos(dash_ind) -> void:
+	if _track_dash() != Vector3.INF:
+		dash_ind.global_position = _track_dash()
+
 func can_dash() -> bool:
 	return dash_allowed and dash_cooldown_timer.is_stopped()
 
@@ -300,9 +308,9 @@ func stop_jump_timers() -> void:
 	wall_jump_buffer_timer.stop()
 
 
-@onready var floor_raycast: RayCast3D = $FloorRaycast
 
 func track_floor() -> Vector3:
+	var floor_raycast: RayCast3D = $FloorRaycast
 	floor_raycast.force_raycast_update()
 	if floor_raycast.is_colliding():
 		return floor_raycast.get_collision_point() + Vector3(0, 0.1, 0)
