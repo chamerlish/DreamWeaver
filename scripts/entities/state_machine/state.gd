@@ -7,6 +7,10 @@ var _is_active_callable: Callable
 var _deactivate_state_callable: Callable
 var _switch_state_callable: Callable
 
+
+@export var is_available: bool = true
+
+
 func is_active() -> bool:
 	return _is_active_callable.call()
 

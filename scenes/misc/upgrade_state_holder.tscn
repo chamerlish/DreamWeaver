@@ -1,0 +1,22 @@
+[gd_scene format=3 uid="uid://j7pyb1t4rgje"]
+
+[ext_resource type="Script" uid="uid://c5wolrmsoyaom" path="res://scripts/misc/upgrade_state_holder.gd" id="1_m65ma"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_l5khr"]
+albedo_color = Color(1, 0, 0, 1)
+
+[sub_resource type="SphereMesh" id="SphereMesh_m65ma"]
+material = SubResource("StandardMaterial3D_l5khr")
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_5eeil"]
+
+[node name="UpgradeStateHolder" type="Area3D" unique_id=1309489799]
+script = ExtResource("1_m65ma")
+
+[node name="Model" type="MeshInstance3D" parent="." unique_id=177818537]
+mesh = SubResource("SphereMesh_m65ma")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=2045672175]
+shape = SubResource("SphereShape3D_5eeil")
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]

@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://bs72ogkvdd7d6"]
 
-[ext_resource type="Script" uid="uid://b54ydvtm7ga81" path="res://scripts/player/player.gd" id="1_ucva2"]
+[ext_resource type="Script" uid="uid://b54ydvtm7ga81" path="res://scripts/entities/player/player.gd" id="1_ucva2"]
 [ext_resource type="Script" uid="uid://bwbxypkqm7bgl" path="res://scripts/entities/state_machine/state_machine.gd" id="2_0owmy"]
 [ext_resource type="Script" uid="uid://btp87202ddbxl" path="res://scripts/entities/player/states/air_entry_state.gd" id="3_qek5x"]
 [ext_resource type="Script" uid="uid://dx15tnwh62i1l" path="res://scripts/entities/player/states/fall_state.gd" id="4_5gtgg"]
@@ -67,9 +67,14 @@ material_override = SubResource("StandardMaterial3D_iof21")
 cast_shadow = 0
 mesh = SubResource("CapsuleMesh_ucva2")
 
-[node name="Collider" type="CollisionShape3D" parent="." unique_id=51584529]
+[node name="BeanBody" type="CollisionShape3D" parent="." unique_id=51584529]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
 shape = SubResource("CapsuleShape3D_iof21")
+
+[node name="Glasses" type="MeshInstance3D" parent="." unique_id=2217502]
+transform = Transform3D(-6.948068e-09, 0, 0.6132065, 0, 0.35283127, 0, -0.15895326, 0, -2.6804107e-08, 0, 1.398, 0.3556022)
+cast_shadow = 0
+mesh = SubResource("BoxMesh_5gtgg")
 
 [node name="StateMachine" type="Node" parent="." unique_id=2010544317 node_paths=PackedStringArray("target_node", "default_state")]
 script = ExtResource("2_0owmy")
@@ -103,10 +108,12 @@ metadata/_custom_type_script = "uid://bgrdchyvffn8v"
 
 [node name="DashPrepareState" type="Node" parent="StateMachine" unique_id=1651392896]
 script = ExtResource("9_5gtgg")
+is_available = false
 metadata/_custom_type_script = "uid://d2tvcxadrd32c"
 
 [node name="DashState" type="Node" parent="StateMachine" unique_id=423400344]
 script = ExtResource("10_h17s1")
+is_available = false
 metadata/_custom_type_script = "uid://crbn04ab1d1vk"
 
 [node name="Timers" type="Node" parent="." unique_id=1661881200]
@@ -153,21 +160,16 @@ process_callback = 0
 wait_time = 0.1
 one_shot = true
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=2217502]
-transform = Transform3D(-6.948068e-09, 0, 0.6132065, 0, 0.35283127, 0, -0.15895326, 0, -2.6804107e-08, 0, 1.398, 0.3556022)
-cast_shadow = 0
-mesh = SubResource("BoxMesh_5gtgg")
-
 [node name="FloorRaycast" type="RayCast3D" parent="." unique_id=1339160303]
 target_position = Vector3(0, -6, 0)
 
 [node name="DashPoint" type="Marker3D" parent="." unique_id=1442484643]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.419, 3)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.419, 4.2340965)
 
 [node name="DashRaycast" type="RayCast3D" parent="DashPoint" unique_id=789263590]
 target_position = Vector3(0, -2, 0)
 
 [node name="PositionIndicator" parent="DashPoint" unique_id=627486979 instance=ExtResource("11_je7p5")]
-transform = Transform3D(1.0525303, 0, 0, 0, -4.600756e-08, -1.0525303, 0, 1.0525303, -4.600756e-08, 0, 0, 0)
+transform = Transform3D(1.0975686, 0, 0, 0, -4.7976247e-08, -1.0975686, 0, 1.0975686, -4.7976247e-08, 0, 0, 0)
 modulate = Color(0.56078434, 0, 0, 1)
 color = Color(0.56078434, 0, 0, 1)

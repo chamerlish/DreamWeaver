@@ -12,6 +12,9 @@ var states: Dictionary[StringName, State]
 var active_state: State # This variable should only be edited using activate_state
 
 func _ready() -> void:
+	
+	StateGlobal.stateAdded.connect(unlock_states_by_array)
+	
 	if target_node:
 		await target_node.ready
 	
@@ -24,6 +27,7 @@ func _ready() -> void:
 			push_error("Default state '%s' is missing in state machine '%s'." % [default_state.get_path(), get_path()])
 		else:
 			activate_state(default_state)
+
 
 func _process(delta: float) -> void:
 	if should_update():
@@ -55,11 +59,20 @@ func should_update() -> bool:
 func _is_state_active(state: State) -> bool:
 	return state == active_state
 
+func add_state(state: State) -> void:
+	states[state.name] = state
+	state.target_node = target_node
+	state._is_active_callable = _is_state_active.bind(state)
+	state._switch_state_callable = activate_state_by_name
+	state._deactivate_state_callable = activate_state.bind(null)
+	state._state_machine_ready()
+
+
 func activate_state(state: State, pass_as_previous: State = null) -> void:
 	var next_state: State = state
 	var previous_state: State = pass_as_previous if pass_as_previous else active_state
 	
-	if next_state == previous_state:
+	if next_state == previous_state or not next_state.is_available:
 		return
 
 	if next_state and next_state not in states.values():
@@ -83,3 +96,14 @@ func activate_state_by_name(state_name: StringName, pass_as_previous: State = nu
 		return
 	
 	activate_state(state, pass_as_previous)
+
+# this is how i will handle upgrades by activating them instead of adding them to the directory since we want that to be read only
+func unlock_states_by_array(state_name: Array[StringName]) -> void:
+	var state: State 
+
+	for s in state_name:
+		state = states.get(s)
+		state.is_available = true
+		if not state:
+			push_error("Attempted to activate missing state '%s' by name in state machine '%s'." % [state_name, get_path()])
+			return
