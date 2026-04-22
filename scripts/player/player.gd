@@ -98,10 +98,15 @@ var freeflying : bool = false
 var position_indicator: PackedScene = preload("res://scenes/ui/props/position_indicator.tscn")
 var floor_indicator: PositionIndicator = position_indicator.instantiate()
 
+
 func _ready() -> void:
 	check_input_mappings()
 	get_parent().add_child.call_deferred(floor_indicator)
 	floor_indicator.color = Color.DEEP_SKY_BLUE
+	
+	
+	dash_point.hide()
+
 
 func _unhandled_input(event: InputEvent) -> void:
 	if can_freefly and Input.is_action_just_pressed(input_freefly):
@@ -240,9 +245,9 @@ func check_input_mappings() -> void:
 #region DASH
 
 @onready var dash_point: Marker3D = $DashPoint
+@onready var dash_indicator: PositionIndicator = dash_point.get_node("PositionIndicator")
 
-var dash_distance: float = 3
-
+@onready var dash_distance: float = abs(global_position.z - dash_indicator.global_position.z)
 func _track_dash() -> Vector3:
 	var floor_raycast: RayCast3D = dash_point.get_node("DashRaycast")
 	floor_raycast.force_raycast_update()
@@ -250,7 +255,7 @@ func _track_dash() -> Vector3:
 		return floor_raycast.get_collision_point() + Vector3(0, 0.1, 0)
 	return Vector3.INF
 
-func show_dash_pos(dash_ind) -> void:
+func show_dash_pos(dash_ind: PositionIndicator) -> void:
 	if _track_dash() != Vector3.INF:
 		dash_ind.global_position = _track_dash()
 

@@ -10,6 +10,7 @@
 [ext_resource type="Script" uid="uid://m06e3ohv0ud1" path="res://scripts/entities/player/states/idle_state.gd" id="7_qek5x"]
 [ext_resource type="Script" uid="uid://d2tvcxadrd32c" path="res://scripts/entities/player/states/dash_prepare_state.gd" id="9_5gtgg"]
 [ext_resource type="Script" uid="uid://crbn04ab1d1vk" path="res://scripts/entities/player/states/dash_state.gd" id="10_h17s1"]
+[ext_resource type="PackedScene" uid="uid://b8myhxsr0t253" path="res://scenes/ui/props/position_indicator.tscn" id="11_je7p5"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_iof21"]
 albedo_color = Color(0.91806, 0.575202, 0.222449, 1)
@@ -161,7 +162,12 @@ mesh = SubResource("BoxMesh_5gtgg")
 target_position = Vector3(0, -6, 0)
 
 [node name="DashPoint" type="Marker3D" parent="." unique_id=1442484643]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.4189217, 1.7108276)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.419, 3)
 
 [node name="DashRaycast" type="RayCast3D" parent="DashPoint" unique_id=789263590]
 target_position = Vector3(0, -2, 0)
+
+[node name="PositionIndicator" parent="DashPoint" unique_id=627486979 instance=ExtResource("11_je7p5")]
+transform = Transform3D(1.0525303, 0, 0, 0, -4.600756e-08, -1.0525303, 0, 1.0525303, -4.600756e-08, 0, 0, 0)
+modulate = Color(0.56078434, 0, 0, 1)
+color = Color(0.56078434, 0, 0, 1)

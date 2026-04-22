@@ -36,7 +36,7 @@ func _physics_update(_delta: float) -> void:
 	
 	player.move_and_slide()
 	player.start_dash()
-	
+	player.show_landing_pos(player.floor_indicator)
 	#if (player.global_position.distance_to(end_pos) <= 0.1
 	#	or player.is_on_wall()
 	#):
