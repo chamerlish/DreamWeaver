@@ -2,7 +2,6 @@
 
 [ext_resource type="PackedScene" uid="uid://bs72ogkvdd7d6" path="res://scenes/player/player.tscn" id="1_jsoev"]
 [ext_resource type="Texture2D" uid="uid://c38e3pcn5agrc" path="res://resources/textures/environment/aerial_asphalt_01/aerial_asphalt_01_diff_4k.jpg" id="1_of82g"]
-[ext_resource type="Script" uid="uid://bb164i5rgogar" path="res://scripts/misc/event_handler.gd" id="3_am3db"]
 [ext_resource type="Script" uid="uid://0ui61otmh1vv" path="res://scripts/cameras/camera_machine.gd" id="4_6boxm"]
 [ext_resource type="PackedScene" uid="uid://j7pyb1t4rgje" path="res://scenes/misc/upgrade_state_holder.tscn" id="4_l6qmh"]
 [ext_resource type="Script" uid="uid://bt1d1jus4akjm" path="res://scripts/cameras/camera_switch_zone.gd" id="5_b7qx8"]
@@ -13,6 +12,81 @@
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_am3db"]
 albedo_texture = ExtResource("1_of82g")
 uv1_triplanar = true
+
+[sub_resource type="GDScript" id="GDScript_p5q2i"]
+script/source = "extends EventHandler
+
+@export var anim_player: AnimationPlayer
+
+func _ready() -> void:
+	StateGlobal.stateAdded.connect(func (_stateName: Array[StringName]): eventTriggered.emit())
+
+
+func _on_event_triggered() -> void:
+	print(\"he\")
+	anim_player.play(\"falling platforms\")
+"
+
+[sub_resource type="Animation" id="Animation_dnlg3"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("../CSGCombiner3D/CSGBox3D2:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(-0.68539786, -3.8748627, -5.6965933)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("../CSGCombiner3D/CSGBox3D5:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(-0.9357023, -3.7295456, -10.278467)]
+}
+
+[sub_resource type="Animation" id="Animation_p5q2i"]
+resource_name = "falling platforms"
+length = 1.0666667
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("../CSGCombiner3D/CSGBox3D2:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector3(-0.68539786, -3.8748627, -5.6965933), Vector3(-0.68539786, -13.894647, -5.6965933)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("../CSGCombiner3D/CSGBox3D5:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 1.0666667),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector3(-0.9357023, -3.7295456, -10.278467), Vector3(-0.9357023, -9.815826, -10.278467)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_pljlr"]
+_data = {
+&"RESET": SubResource("Animation_dnlg3"),
+&"falling platforms": SubResource("Animation_p5q2i")
+}
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_of82g"]
 sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
@@ -63,16 +137,12 @@ size = Vector3(19.70288, 4.8304443, 27.704895)
 [node name="DemoScene" type="Node3D" unique_id=1150316660]
 
 [node name="CSGCombiner3D" type="CSGCombiner3D" parent="." unique_id=289046108]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.13953924, -0.47630072, 0.24450994)
 use_collision = true
 
 [node name="CSGBox3D" type="CSGBox3D" parent="CSGCombiner3D" unique_id=1051933398]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0011291504, -7.138672, 0.72919464)
 size = Vector3(9.594299, 15.277344, 8.987427)
-material = SubResource("StandardMaterial3D_am3db")
-
-[node name="CSGBox3D2" type="CSGBox3D" parent="CSGCombiner3D" unique_id=327137054]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.112241745, -3.7295432, -5.67513)
-size = Vector3(1.3603153, 8.323425, 1.4926147)
 material = SubResource("StandardMaterial3D_am3db")
 
 [node name="CSGBox3D8" type="CSGBox3D" parent="CSGCombiner3D" unique_id=1805540888]
@@ -95,16 +165,19 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.1956306, -3.6929688, -8.126
 size = Vector3(1.3603153, 8.396576, 1.4926147)
 material = SubResource("StandardMaterial3D_am3db")
 
-[node name="CSGBox3D5" type="CSGBox3D" parent="CSGCombiner3D" unique_id=155548394]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.9357023, -3.7295442, -10.278467)
-size = Vector3(1.3603153, 8.323425, 1.4926147)
-material = SubResource("StandardMaterial3D_am3db")
-
-[node name="AnimationPlayer" type="AnimationPlayer" parent="CSGCombiner3D/CSGBox3D5" unique_id=2114836206]
-
 [node name="CSGBox3D3" type="CSGBox3D" parent="CSGCombiner3D" unique_id=710453905]
 transform = Transform3D(0.9999751, -0.003225078, 0.00628021, 0.0032382493, 0.9999926, -0.002088526, -0.006273429, 0.0021088084, 0.9999781, -0.0011291504, -14.786377, -15.358039)
 size = Vector3(9.594299, 30.572754, 7.130127)
+material = SubResource("StandardMaterial3D_am3db")
+
+[node name="CSGBox3D2" type="CSGBox3D" parent="CSGCombiner3D" unique_id=327137054]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.68539786, -3.8748627, -5.6965933)
+size = Vector3(1.3603153, 8.323425, 1.4926147)
+material = SubResource("StandardMaterial3D_am3db")
+
+[node name="CSGBox3D5" type="CSGBox3D" parent="CSGCombiner3D" unique_id=155548394]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.9357023, -3.7295456, -10.278467)
+size = Vector3(1.3603153, 8.323425, 1.4926147)
 material = SubResource("StandardMaterial3D_am3db")
 
 [node name="Player" parent="." unique_id=369957944 instance=ExtResource("1_jsoev")]
@@ -114,9 +187,13 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.9923887, 1.567306, 1.439408
 transform = Transform3D(-0.8660254, -0.43301278, 0.25, 0, 0.49999997, 0.86602545, -0.50000006, 0.75, -0.43301266, 0, 0, 0)
 shadow_enabled = true
 
-[node name="EventHandler" type="Node" parent="." unique_id=1932419290]
-script = ExtResource("3_am3db")
+[node name="EventHandler" type="Node" parent="." unique_id=1932419290 node_paths=PackedStringArray("anim_player")]
+script = SubResource("GDScript_p5q2i")
+anim_player = NodePath("AnimationPlayer")
 metadata/_custom_type_script = "uid://bb164i5rgogar"
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="EventHandler" unique_id=608087598]
+libraries/ = SubResource("AnimationLibrary_pljlr")
 
 [node name="OmniLight3D" type="OmniLight3D" parent="." unique_id=646916282]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.2940472, 2.3385375, 0)
@@ -215,3 +292,6 @@ mesh = SubResource("BoxMesh_1yxfn")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="DeathFog" unique_id=862500666]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.440796, -1.7266235, 2.8880916)
 shape = SubResource("BoxShape3D_jruta")
+
+[connection signal="eventTriggered" from="EventHandler" to="EventHandler" method="_on_event_triggered"]
+[connection signal="body_entered" from="UpgradeStateHolder" to="EventHandler" method="_on_upgrade_state_holder_body_entered"]
