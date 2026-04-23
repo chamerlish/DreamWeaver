@@ -105,6 +105,7 @@ func _ready() -> void:
 	
 	
 	dash_point.hide()
+	dash_line_instance.hide()
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -247,6 +248,8 @@ func check_input_mappings() -> void:
 @onready var dash_point: Marker3D = $DashPoint
 @onready var dash_indicator: PositionIndicator = dash_point.get_node("PositionIndicator")
 
+@onready var dash_point_pos: Vector3 = dash_point.position
+
 @onready var dash_distance: float = abs(global_position.z - dash_indicator.global_position.z)
 func _track_dash() -> Vector3:
 	var floor_raycast: RayCast3D = dash_point.get_node("DashRaycast")
@@ -258,6 +261,8 @@ func _track_dash() -> Vector3:
 func show_dash_pos(dash_ind: PositionIndicator) -> void:
 	if _track_dash() != Vector3.INF:
 		dash_ind.global_position = _track_dash()
+		
+	draw_dotted_line(global_position, dash_ind.global_position)
 
 func can_dash() -> bool:
 	return dash_allowed and dash_cooldown_timer.is_stopped()
@@ -267,18 +272,64 @@ func try_dash() -> void:
 		state_machine.activate_state_by_name.call_deferred("DashPrepareState")
 
 func start_dash() -> void:
+	## MAKING DASH PROPS BEHAVE ON A GLOBAL SCALE 
+	dash_point.top_level = true
+	dash_line_instance.top_level = true
+	
 	var direction = transform.basis.z
 	var horizontal_force = direction * dash_power
 	
 	velocity.x = horizontal_force.x
 	velocity.z = horizontal_force.z
+	
 	dash_allowed = false
 	
 
 func stop_dash():
+	## MAKING DASH PROPS BEHAVE ON A LOCAL SCALE 
+	dash_point.top_level = false
+	dash_line_instance.top_level = false
+	
 	velocity.z = 0
 	velocity.x = 0
+
+	dash_point.hide()
+	dash_line_instance.hide()
+	
+	
+	dash_point.position = dash_point_pos
+
+	
 	dash_allowed = true
+
+@onready var dash_line_instance: MeshInstance3D = $DashLine
+@onready var mesh: ImmediateMesh = dash_line_instance.mesh
+
+func draw_dotted_line(begin: Vector3, end: Vector3):
+	var segment_length = 0.2
+	var gap_length = 0.2
+	
+	begin = dash_line_instance.to_local(begin)
+	end = dash_line_instance.to_local(end)
+	
+	var dir = (end - begin).normalized()
+	var travelled_dist = 0.0
+	
+	mesh.clear_surfaces()
+	mesh.surface_begin(Mesh.PRIMITIVE_LINES)
+	
+	while travelled_dist < dash_distance:
+		var a: Vector3 = begin + dir * travelled_dist
+		var b: Vector3 = begin + dir * min(travelled_dist + segment_length, dash_distance)
+		
+		mesh.surface_add_vertex(a)
+		mesh.surface_add_vertex(b)
+		
+		travelled_dist += segment_length + gap_length
+	
+	mesh.surface_end()
+
+
 
 #endregion
 

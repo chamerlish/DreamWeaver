@@ -7,7 +7,6 @@ var dash_dir: float
 var distance: float
 
 func _enter(previous_state: State) -> void:
-	
 	player.start_dash()
 	player.dash_allowed = false
 	start_pos = player.global_position

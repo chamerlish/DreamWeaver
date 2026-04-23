@@ -113,12 +113,10 @@ metadata/_custom_type_script = "uid://bgrdchyvffn8v"
 
 [node name="DashPrepareState" type="Node" parent="StateMachine" unique_id=1651392896]
 script = ExtResource("9_5gtgg")
-is_available = false
 metadata/_custom_type_script = "uid://d2tvcxadrd32c"
 
 [node name="DashState" type="Node" parent="StateMachine" unique_id=423400344]
 script = ExtResource("10_h17s1")
-is_available = false
 metadata/_custom_type_script = "uid://crbn04ab1d1vk"
 
 [node name="Timers" type="Node" parent="." unique_id=1661881200]
@@ -179,6 +177,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.419, 4.2340965)
 target_position = Vector3(0, -2, 0)
 
 [node name="PositionIndicator" parent="DashPoint" unique_id=627486979 instance=ExtResource("11_je7p5")]
-transform = Transform3D(1.0434755, 0, 0, 0, -4.5611763e-08, -1.0434755, 0, 1.0434755, -4.5611763e-08, 0, 0, 0)
+transform = Transform3D(0.90271115, 0, 0, 0, -3.9458758e-08, -0.90271115, 0, 0.90271115, -3.9458758e-08, 0, 0, 0)
 modulate = Color(0.56078434, 0, 0, 1)
 color = Color(0.56078434, 0, 0, 1)
