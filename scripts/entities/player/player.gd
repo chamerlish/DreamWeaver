@@ -90,7 +90,6 @@ var mouse_captured : bool = false
 var move_speed : float = 0.0
 var freeflying : bool = false
 
-@onready var collider: CollisionShape3D = $Collider
 @onready var state_machine: StateMachine = $StateMachine as StateMachine
 
 
@@ -108,14 +107,6 @@ func _ready() -> void:
 	dash_line_instance.hide()
 
 
-func _unhandled_input(event: InputEvent) -> void:
-	if can_freefly and Input.is_action_just_pressed(input_freefly):
-		if freeflying:
-			disable_freefly()
-		else:
-			enable_freefly()
-
-
 func apply_gravity(delta: float) -> void:
 	if has_gravity and not is_on_floor():
 		velocity.y += get_gravity().y * delta * 2
@@ -126,14 +117,14 @@ func get_input_vector() -> Vector2:
 
 func get_camera_yaw() -> Basis:
 	var cam := get_viewport().get_camera_3d()
-	var basis := cam.global_transform.basis
+	var _basis := cam.global_transform.basis
 
 	# flatten to XZ plane (important for top-down / pitch cameras)
-	basis.y = Vector3.UP
-	basis.x = basis.x.normalized()
-	basis.z = basis.z.normalized()
+	_basis.y = Vector3.UP
+	_basis.x = _basis.x.normalized()
+	_basis.z = _basis.z.normalized()
 
-	return basis
+	return _basis
 	
 func apply_movement(delta: float) -> void:
 	var input_vec := get_input_vector() 
@@ -194,19 +185,6 @@ func _physics_process(_delta: float) -> void:
 		move_speed = sprint_speed
 	else:
 		move_speed = base_speed
-		
-	
-
-
-func enable_freefly() -> void:
-	collider.disabled = true
-	freeflying = true
-	velocity = Vector3.ZERO
-
-
-func disable_freefly() -> void:
-	collider.disabled = false
-	freeflying = false
 
 
 func capture_mouse() -> void:

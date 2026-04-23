@@ -3,7 +3,9 @@
 [ext_resource type="PackedScene" uid="uid://bs72ogkvdd7d6" path="res://scenes/player/player.tscn" id="1_jsoev"]
 [ext_resource type="Texture2D" uid="uid://c38e3pcn5agrc" path="res://resources/textures/environment/aerial_asphalt_01/aerial_asphalt_01_diff_4k.jpg" id="1_of82g"]
 [ext_resource type="Script" uid="uid://bb164i5rgogar" path="res://scripts/misc/event_handler.gd" id="3_am3db"]
+[ext_resource type="Script" uid="uid://0ui61otmh1vv" path="res://scripts/cameras/camera_machine.gd" id="4_6boxm"]
 [ext_resource type="PackedScene" uid="uid://j7pyb1t4rgje" path="res://scenes/misc/upgrade_state_holder.tscn" id="4_l6qmh"]
+[ext_resource type="Script" uid="uid://bt1d1jus4akjm" path="res://scripts/cameras/camera_switch_zone.gd" id="5_b7qx8"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_am3db"]
 albedo_texture = ExtResource("1_of82g")
@@ -24,28 +26,21 @@ ambient_light_color = Color(1, 1, 1, 1)
 ambient_light_energy = 0.5
 tonemap_mode = 2
 
-[sub_resource type="GDScript" id="GDScript_g0qdk"]
-script/source = "extends Area3D
-
-class_name CamSwitchZone
-
-@onready var camera_node: Camera3D = $Camera3D
-
-
-func _on_body_entered(body: Node3D) -> void:
-	if \"Player\" in body.get_groups():
-		camera_node.current = true
-		#print(get_viewport().get_camera_3d())
-"
+[sub_resource type="Curve3D" id="Curve3D_l6qmh"]
+_data = {
+"points": PackedVector3Array(0, 0, 0, 0, 0, 0, 4.34043, 0.16330051, 3.78372, 0, 0, 0, 0, 0, 0, 7.2456083, 5.3009477, -6.647464, 0, 0, 0, 0, 0, 0, 4.7878976, 1.7952838, -18.096535),
+"tilts": PackedFloat32Array(0, 0, 0)
+}
+point_count = 3
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_g0qdk"]
 size = Vector3(10.0095215, 4.385803, 5)
 
+[sub_resource type="BoxShape3D" id="BoxShape3D_of82g"]
+size = Vector3(10.001343, 4.2875977, 12.664673)
+
 [sub_resource type="BoxShape3D" id="BoxShape3D_am3db"]
 size = Vector3(10.0095215, 4.385803, 4.2470703)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_of82g"]
-size = Vector3(10.001343, 4.2875977, 13.375977)
 
 [node name="DemoScene" type="Node3D" unique_id=1150316660]
 
@@ -53,8 +48,8 @@ size = Vector3(10.001343, 4.2875977, 13.375977)
 use_collision = true
 
 [node name="CSGBox3D" type="CSGBox3D" parent="CSGCombiner3D" unique_id=1051933398]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0011291504, -7.138672, -0.032829285)
-size = Vector3(9.594299, 15.277344, 7.463379)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0011291504, -7.138672, 0.72919464)
+size = Vector3(9.594299, 15.277344, 8.987427)
 material = SubResource("StandardMaterial3D_am3db")
 
 [node name="CSGBox3D2" type="CSGBox3D" parent="CSGCombiner3D" unique_id=327137054]
@@ -68,13 +63,13 @@ size = Vector3(1.3603153, 23.855736, 23.068222)
 material = SubResource("StandardMaterial3D_am3db")
 
 [node name="CSGBox3D9" type="CSGBox3D" parent="CSGCombiner3D" unique_id=1892234459]
-transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -4.182992, -7.966223, 4.1969643)
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -4.182992, -7.966223, 5.6969643)
 size = Vector3(1.3603153, 23.855736, 23.068222)
 material = SubResource("StandardMaterial3D_am3db")
 
 [node name="CSGBox3D6" type="CSGBox3D" parent="CSGCombiner3D" unique_id=1037896808]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.46094, -7.331862, -7.7384453)
-size = Vector3(1.3603153, 23.674362, 23.068222)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.46094, -7.331862, -6.9220657)
+size = Vector3(1.3603153, 23.674362, 24.700981)
 material = SubResource("StandardMaterial3D_am3db")
 
 [node name="CSGBox3D4" type="CSGBox3D" parent="CSGCombiner3D" unique_id=1849166747]
@@ -116,45 +111,59 @@ environment = SubResource("Environment_l6qmh")
 
 [node name="CAMERAS" type="Node" parent="." unique_id=1324290900]
 
-[node name="CameraSwitchZone2" type="Area3D" parent="CAMERAS" unique_id=1032069981]
-script = SubResource("GDScript_g0qdk")
+[node name="CameraPath" type="Path3D" parent="CAMERAS" unique_id=1324970765]
+curve = SubResource("Curve3D_l6qmh")
 
-[node name="Camera3D" type="Camera3D" parent="CAMERAS/CameraSwitchZone2" unique_id=1056721194]
-transform = Transform3D(0.8480481, -0.21722612, 0.48335, 0, 0.9121201, 0.40992305, -0.52991927, -0.34763446, 0.7735217, 4.9334393, 3.8412294, 4.617835)
+[node name="MainTrack" type="PathFollow3D" parent="CAMERAS/CameraPath" unique_id=919400732]
+transform = Transform3D(0.9999991, 0, 0, 0, 0.9999993, 0, 0, 0, 0.9999999, 4.34043, 0.16330051, 3.78372)
+rotation_mode = 0
+
+[node name="Camera3D" type="Camera3D" parent="CAMERAS/CameraPath/MainTrack" unique_id=1811454939]
+transform = Transform3D(-0.93902224, 0, 0.34385648, 0, 1, 0, -0.34385648, 0, -0.93902224, 0, 0, 0)
 current = true
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="CAMERAS/CameraSwitchZone2" unique_id=324266853]
+[node name="CameraMachine" type="Node3D" parent="CAMERAS" unique_id=274552997 node_paths=PackedStringArray("main_track", "camera")]
+script = ExtResource("4_6boxm")
+main_track = NodePath("../CameraPath/MainTrack")
+camera = NodePath("../CameraPath/MainTrack/Camera3D")
+metadata/_custom_type_script = "uid://0ui61otmh1vv"
+
+[node name="CameraSwitchZone" type="Area3D" parent="CAMERAS/CameraMachine" unique_id=714548238]
+script = ExtResource("5_b7qx8")
+metadata/_custom_type_script = "uid://bt1d1jus4akjm"
+
+[node name="Camera3D" type="Camera3D" parent="CAMERAS/CameraMachine/CameraSwitchZone" unique_id=1340274490]
+transform = Transform3D(0.8480481, -0.21722612, 0.48335, 0, 0.9121201, 0.40992305, -0.52991927, -0.34763446, 0.7735217, 4.9334393, 3.8412294, 4.617835)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="CAMERAS/CameraMachine/CameraSwitchZone" unique_id=1929321317]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.037353516, 2.3102112, 2.0603333)
 shape = SubResource("BoxShape3D_g0qdk")
 
-[node name="CameraSwitchZone4" type="Area3D" parent="CAMERAS" unique_id=1095141279]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -15.929942)
-script = SubResource("GDScript_g0qdk")
+[node name="CameraSwitchZone2" type="Area3D" parent="CAMERAS/CameraMachine" unique_id=1078910352]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.36115503, 0, -6.8145494)
+script = ExtResource("5_b7qx8")
+metadata/_custom_type_script = "uid://bt1d1jus4akjm"
 
-[node name="Camera3D" type="Camera3D" parent="CAMERAS/CameraSwitchZone4" unique_id=1469433034]
-transform = Transform3D(-0.49697405, 0.1996292, 0.84449095, 0, 0.97317886, -0.23004973, -0.86776555, -0.114328735, -0.48364457, 4.4067607, 1.9595182, -1.9940081)
-current = true
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="CAMERAS/CameraSwitchZone4" unique_id=537051836]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.037353516, 2.3102112, 0.18386841)
-shape = SubResource("BoxShape3D_am3db")
-
-[node name="CameraSwitchZone3" type="Area3D" parent="CAMERAS" unique_id=1753108055]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.3600822, 0, -6.8122945)
-script = SubResource("GDScript_g0qdk")
-
-[node name="Camera3D" type="Camera3D" parent="CAMERAS/CameraSwitchZone3" unique_id=1835940475]
-transform = Transform3D(-4.371139e-08, -0.4709965, 0.8821351, 0, 0.8821351, 0.4709965, -1, 2.058791e-08, -3.855935e-08, 7.5364923, 5.323146, 0.117391594)
+[node name="Camera3D" type="Camera3D" parent="CAMERAS/CameraMachine/CameraSwitchZone2" unique_id=813972852]
+transform = Transform3D(-4.371139e-08, -0.71146214, 0.7027245, 0, 0.7027245, 0.71146214, -1, 3.1098995e-08, -3.0717064e-08, 6.6257877, 7.0288153, 0.11739163)
 fov = 55.935734
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="CAMERAS/CameraSwitchZone3" unique_id=489918108]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.12322998, 1.6437988, -0.2189331)
+[node name="CollisionShape3D" type="CollisionShape3D" parent="CAMERAS/CameraMachine/CameraSwitchZone2" unique_id=571350873]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.12322998, 1.6437988, -0.57458496)
 shape = SubResource("BoxShape3D_of82g")
+
+[node name="CameraSwitchZone3" type="Area3D" parent="CAMERAS/CameraMachine" unique_id=1552639389]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -15.914289)
+script = ExtResource("5_b7qx8")
+metadata/_custom_type_script = "uid://bt1d1jus4akjm"
+
+[node name="Camera3D" type="Camera3D" parent="CAMERAS/CameraMachine/CameraSwitchZone3" unique_id=670192364]
+transform = Transform3D(-0.49697405, 0.1996292, 0.84449095, 0, 0.97317886, -0.23004973, -0.86776555, -0.114328735, -0.48364457, 4.4067607, 1.9595182, -1.9940081)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="CAMERAS/CameraMachine/CameraSwitchZone3" unique_id=639908934]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.037353516, 2.3102112, 0.18386841)
+shape = SubResource("BoxShape3D_am3db")
 
 [node name="UpgradeStateHolder" parent="." unique_id=1309489799 instance=ExtResource("4_l6qmh")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.3317909, -16.25872)
 upgradeStateName = Array[StringName]([&"DashPrepareState", &"DashState"])
-
-[connection signal="body_entered" from="CAMERAS/CameraSwitchZone2" to="CAMERAS/CameraSwitchZone2" method="_on_body_entered"]
-[connection signal="body_entered" from="CAMERAS/CameraSwitchZone4" to="CAMERAS/CameraSwitchZone4" method="_on_body_entered"]
-[connection signal="body_entered" from="CAMERAS/CameraSwitchZone3" to="CAMERAS/CameraSwitchZone3" method="_on_body_entered"]
