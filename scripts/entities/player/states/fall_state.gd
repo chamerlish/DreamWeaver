@@ -3,8 +3,13 @@ extends PlayerState
 
 
 func _enter(previous_state: State) -> void:
+	
+	print('h"')
+	
 	if previous_state is RunState:
 		player.jump_coyote_timer.start()
+		
+	
 	
 	if previous_state is JumpState or previous_state is WallJumpState:
 		player.velocity.x += player.jump_peak_boost * signf(player.velocity.x)
@@ -16,8 +21,8 @@ func _physics_update(delta: float) -> void:
 	player.apply_gravity(delta)
 	player.apply_movement(delta)
 	player.look_at_dir()
-	player.try_coyote_jump()
 	player.try_jump_buffer_timer()
+	player.try_jump()
 	
 	player.show_landing_pos(player.floor_indicator)
 	

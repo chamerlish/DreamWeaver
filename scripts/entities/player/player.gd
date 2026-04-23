@@ -4,7 +4,6 @@ extends CharacterBody3D
 
 @export var can_move : bool = true
 @export var has_gravity : bool = true
-@export var can_jump : bool = true
 @export var can_sprint : bool = false
 @export var can_freefly : bool = false
 
@@ -189,12 +188,13 @@ func show_landing_pos(floor_ind: PositionIndicator) -> void:
 		floor_ind.hide()
 
 
-func _physics_process(delta: float) -> void:
-	
+func _physics_process(_delta: float) -> void:
 	if can_sprint and Input.is_action_pressed(input_sprint):
 		move_speed = sprint_speed
 	else:
 		move_speed = base_speed
+		
+	
 
 
 func enable_freefly() -> void:
@@ -282,18 +282,28 @@ func stop_dash():
 
 #endregion
 
+#region JUMP
+
+var can_jump: bool
+
+func _refresh_can_jump():
+	if is_on_floor():
+		can_jump = true
+
 func jump() -> void:
 	velocity.y = jump_velocity
+	can_jump = false
 
 
 func try_jump() -> void:
-	if Input.is_action_just_pressed(input_jump):
-		jump()
+	_refresh_can_jump()
+	if Input.is_action_just_pressed(input_jump) and can_jump:
+		try_coyote_jump()
 
 
 func try_coyote_jump() -> void:
-	if not jump_coyote_timer.is_stopped():
-		try_jump()
+	if is_on_floor() or not jump_coyote_timer.is_stopped():
+		jump()
 
 
 func try_jump_buffer_timer() -> void:
@@ -312,7 +322,7 @@ func stop_jump_timers() -> void:
 	wall_jump_coyote_timer.stop()
 	wall_jump_buffer_timer.stop()
 
-
+#endregion
 
 func track_floor() -> Vector3:
 	var floor_raycast: RayCast3D = $FloorRaycast

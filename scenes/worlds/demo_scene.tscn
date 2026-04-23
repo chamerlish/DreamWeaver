@@ -62,6 +62,21 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.112241745, -3.7295432, -5.
 size = Vector3(1.3603153, 8.323425, 1.4926147)
 material = SubResource("StandardMaterial3D_am3db")
 
+[node name="CSGBox3D8" type="CSGBox3D" parent="CSGCombiner3D" unique_id=1805540888]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -4.1829934, -7.966223, -19.868788)
+size = Vector3(1.3603153, 23.855736, 23.068222)
+material = SubResource("StandardMaterial3D_am3db")
+
+[node name="CSGBox3D9" type="CSGBox3D" parent="CSGCombiner3D" unique_id=1892234459]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -4.182992, -7.966223, 4.1969643)
+size = Vector3(1.3603153, 23.855736, 23.068222)
+material = SubResource("StandardMaterial3D_am3db")
+
+[node name="CSGBox3D6" type="CSGBox3D" parent="CSGCombiner3D" unique_id=1037896808]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.46094, -7.331862, -7.7384453)
+size = Vector3(1.3603153, 23.674362, 23.068222)
+material = SubResource("StandardMaterial3D_am3db")
+
 [node name="CSGBox3D4" type="CSGBox3D" parent="CSGCombiner3D" unique_id=1849166747]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.1956306, -3.6929688, -8.12656)
 size = Vector3(1.3603153, 8.396576, 1.4926147)
@@ -75,7 +90,7 @@ material = SubResource("StandardMaterial3D_am3db")
 [node name="AnimationPlayer" type="AnimationPlayer" parent="CSGCombiner3D/CSGBox3D5" unique_id=2114836206]
 
 [node name="CSGBox3D3" type="CSGBox3D" parent="CSGCombiner3D" unique_id=710453905]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0011291504, -14.786377, -15.358039)
+transform = Transform3D(0.9999751, -0.003225078, 0.00628021, 0.0032382493, 0.9999926, -0.002088526, -0.006273429, 0.0021088084, 0.9999781, -0.0011291504, -14.786377, -15.358039)
 size = Vector3(9.594299, 30.572754, 7.130127)
 material = SubResource("StandardMaterial3D_am3db")
 

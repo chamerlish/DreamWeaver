@@ -8,4 +8,4 @@ func _enter(previous_state: State) -> void:
 		switch_to("JumpState", previous_state)
 	
 	
-	player.stop_jump_timers()
+	# player.stop_jump_timers()
