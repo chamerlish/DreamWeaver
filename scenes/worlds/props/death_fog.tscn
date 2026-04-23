@@ -1,0 +1,25 @@
+[gd_scene format=3 uid="uid://bjaj0ce6sjabt"]
+
+[ext_resource type="Script" uid="uid://e8bkv7bvyolp" path="res://scripts/props/death_fog.gd" id="1_5ign4"]
+[ext_resource type="Shader" uid="uid://ox3p2dcc621m" path="res://resources/shaders/death_fog.gdshader" id="1_jruta"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_5ign4"]
+render_priority = 0
+shader = ExtResource("1_jruta")
+shader_parameter/top_color = Color(0.2, 0.2, 0.2, 1)
+shader_parameter/bottom_color = Color(0, 0, 0, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_1yxfn"]
+material = SubResource("ShaderMaterial_5ign4")
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_jruta"]
+size = Vector3(19.70288, 4.8304443, 27.704895)
+
+[node name="DeathFog" type="Area3D" unique_id=1800607030]
+script = ExtResource("1_5ign4")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=100968501]
+mesh = SubResource("BoxMesh_1yxfn")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=862500666]
+shape = SubResource("BoxShape3D_jruta")

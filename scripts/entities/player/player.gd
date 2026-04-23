@@ -359,3 +359,8 @@ func track_floor() -> Vector3:
 	if floor_raycast.is_colliding():
 		return floor_raycast.get_collision_point() + Vector3(0, 0.1, 0)
 	return Vector3.INF
+
+var current_checkpoint: Checkpoint
+
+func die():
+	global_position = current_checkpoint.global_position

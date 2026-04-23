@@ -6,6 +6,9 @@
 [ext_resource type="Script" uid="uid://0ui61otmh1vv" path="res://scripts/cameras/camera_machine.gd" id="4_6boxm"]
 [ext_resource type="PackedScene" uid="uid://j7pyb1t4rgje" path="res://scenes/misc/upgrade_state_holder.tscn" id="4_l6qmh"]
 [ext_resource type="Script" uid="uid://bt1d1jus4akjm" path="res://scripts/cameras/camera_switch_zone.gd" id="5_b7qx8"]
+[ext_resource type="Script" uid="uid://c7k6rac2u4db3" path="res://scripts/props/checkpoint.gd" id="7_t71ii"]
+[ext_resource type="Script" uid="uid://e8bkv7bvyolp" path="res://scripts/props/death_fog.gd" id="8_p5q2i"]
+[ext_resource type="Shader" uid="uid://ox3p2dcc621m" path="res://resources/shaders/death_fog.gdshader" id="9_pljlr"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_am3db"]
 albedo_texture = ExtResource("1_of82g")
@@ -42,6 +45,21 @@ size = Vector3(10.001343, 4.2875977, 12.664673)
 [sub_resource type="BoxShape3D" id="BoxShape3D_am3db"]
 size = Vector3(10.0095215, 4.385803, 4.2470703)
 
+[sub_resource type="BoxShape3D" id="BoxShape3D_dnlg3"]
+size = Vector3(12.12085, 1.9326172, 7.657715)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_5ign4"]
+render_priority = 0
+shader = ExtResource("9_pljlr")
+shader_parameter/top_color = Color(0.2, 0.2, 0.2, 1)
+shader_parameter/bottom_color = Color(0, 0, 0, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_1yxfn"]
+material = SubResource("ShaderMaterial_5ign4")
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_jruta"]
+size = Vector3(19.70288, 4.8304443, 27.704895)
+
 [node name="DemoScene" type="Node3D" unique_id=1150316660]
 
 [node name="CSGCombiner3D" type="CSGCombiner3D" parent="." unique_id=289046108]
@@ -58,18 +76,18 @@ size = Vector3(1.3603153, 8.323425, 1.4926147)
 material = SubResource("StandardMaterial3D_am3db")
 
 [node name="CSGBox3D8" type="CSGBox3D" parent="CSGCombiner3D" unique_id=1805540888]
-transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -4.1829934, -7.966223, -19.868788)
-size = Vector3(1.3603153, 23.855736, 23.068222)
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -4.1829934, 0.3632946, -19.868788)
+size = Vector3(1.3603153, 40.51477, 23.068222)
 material = SubResource("StandardMaterial3D_am3db")
 
 [node name="CSGBox3D9" type="CSGBox3D" parent="CSGCombiner3D" unique_id=1892234459]
-transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -4.182992, -7.966223, 5.6969643)
-size = Vector3(1.3603153, 23.855736, 23.068222)
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -4.182992, -2.8940907, 5.6969643)
+size = Vector3(1.3603153, 34, 23.068222)
 material = SubResource("StandardMaterial3D_am3db")
 
 [node name="CSGBox3D6" type="CSGBox3D" parent="CSGCombiner3D" unique_id=1037896808]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.46094, -7.331862, -6.9220657)
-size = Vector3(1.3603153, 23.674362, 24.700981)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.46094, 1.7972655, -6.9220657)
+size = Vector3(1.3603153, 41.932617, 24.700981)
 material = SubResource("StandardMaterial3D_am3db")
 
 [node name="CSGBox3D4" type="CSGBox3D" parent="CSGCombiner3D" unique_id=1849166747]
@@ -149,7 +167,7 @@ transform = Transform3D(-4.371139e-08, -0.71146214, 0.7027245, 0, 0.7027245, 0.7
 fov = 55.935734
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="CAMERAS/CameraMachine/CameraSwitchZone2" unique_id=571350873]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.12322998, 1.6437988, -0.57458496)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.118168354, 1.6437988, -0.57458496)
 shape = SubResource("BoxShape3D_of82g")
 
 [node name="CameraSwitchZone3" type="Area3D" parent="CAMERAS/CameraMachine" unique_id=1552639389]
@@ -167,3 +185,33 @@ shape = SubResource("BoxShape3D_am3db")
 [node name="UpgradeStateHolder" parent="." unique_id=1309489799 instance=ExtResource("4_l6qmh")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.3317909, -16.25872)
 upgradeStateName = Array[StringName]([&"DashPrepareState", &"DashState"])
+
+[node name="CHECKPOINTS" type="Node" parent="." unique_id=242841623]
+
+[node name="Checkpoint" type="Area3D" parent="CHECKPOINTS" unique_id=319895481]
+script = ExtResource("7_t71ii")
+metadata/_custom_type_script = "uid://c7k6rac2u4db3"
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="CHECKPOINTS/Checkpoint" unique_id=318622544]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.1536245, 0.4663086, 1.1927128)
+shape = SubResource("BoxShape3D_dnlg3")
+
+[node name="Checkpoint2" type="Area3D" parent="CHECKPOINTS" unique_id=1850775416]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.58236945, 0, -15.777908)
+script = ExtResource("7_t71ii")
+metadata/_custom_type_script = "uid://c7k6rac2u4db3"
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="CHECKPOINTS/Checkpoint2" unique_id=1447325397]
+shape = SubResource("BoxShape3D_dnlg3")
+
+[node name="DeathFog" type="Area3D" parent="." unique_id=1800607030]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.3814511, -2.2709308, -5.530721)
+script = ExtResource("8_p5q2i")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="DeathFog" unique_id=100968501]
+transform = Transform3D(39.306, 0, 0, 0, 50, 0, 0, 0, 80, 0, -28.583384, 0)
+mesh = SubResource("BoxMesh_1yxfn")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="DeathFog" unique_id=862500666]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.440796, -1.7266235, 2.8880916)
+shape = SubResource("BoxShape3D_jruta")
