@@ -3,9 +3,6 @@ extends PlayerState
 
 
 func _enter(previous_state: State) -> void:
-	
-	print('h"')
-	
 	if previous_state is RunState:
 		player.jump_coyote_timer.start()
 		
