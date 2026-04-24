@@ -5,6 +5,11 @@ class_name CameraSwitchZone
 
 signal switch_camera(new_camera: Camera3D)
 
+@export var is_trail: bool = false
+@export var trail_follower: PathFollow3D
+@export var trail_path: Path3D
+
+var player: Player
 
 func _ready() -> void:
 	body_entered.connect(_on_body_entered)
