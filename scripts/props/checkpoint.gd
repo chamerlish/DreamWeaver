@@ -7,4 +7,3 @@ func _ready() -> void:
 func _on_body_entered(body: Node3D):
 	if "Player" in body.get_groups():
 		body.current_checkpoint = self
-		print(body.current_checkpoint)
