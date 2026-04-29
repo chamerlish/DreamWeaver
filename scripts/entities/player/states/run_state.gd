@@ -8,7 +8,7 @@ func _physics_update(delta: float) -> void:
 	player.try_dash()
 
 	player.apply_movement(delta)
-	player.look_at_dir()
+	player.look_at_dir(delta)
 	
 	player.move_and_slide()
 	

@@ -17,7 +17,7 @@ func _enter(previous_state: State) -> void:
 func _physics_update(delta: float) -> void:
 	player.apply_gravity(delta)
 	player.apply_movement(delta)
-	player.look_at_dir()
+	player.look_at_dir(delta)
 	player.try_jump_buffer_timer()
 	player.try_jump()
 	

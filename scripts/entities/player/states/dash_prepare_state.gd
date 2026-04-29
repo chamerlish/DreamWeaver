@@ -17,8 +17,8 @@ func _enter(previous_state: State) -> void:
 	player.after_dash_gravity_timer.start()
 
 
-func _physics_update(_delta: float) -> void:
-	player.look_at_dir()
+func _physics_update(delta: float) -> void:
+	player.look_at_dir(delta)
 	player.try_dash()
 	player.move_and_slide()
 	

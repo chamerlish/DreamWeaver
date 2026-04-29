@@ -98,10 +98,8 @@ var floor_indicator: PositionIndicator = position_indicator.instantiate()
 
 
 func _ready() -> void:
-	check_input_mappings()
 	get_parent().add_child.call_deferred(floor_indicator)
 	floor_indicator.color = Color.DEEP_SKY_BLUE
-	
 	
 	dash_point.hide()
 	dash_line_instance.hide()
@@ -115,44 +113,9 @@ func apply_gravity(delta: float) -> void:
 func get_input_vector() -> Vector2:
 	return Input.get_vector(input_left, input_right, input_forward, input_back)
 
-func get_camera_yaw() -> Basis:
-	var cam := get_viewport().get_camera_3d()
-	var _basis := cam.global_transform.basis
-
-	# flatten to XZ plane (important for top-down / pitch cameras)
-	_basis.y = Vector3.UP
-	_basis.x = _basis.x.normalized()
-	_basis.z = _basis.z.normalized()
-
-	return _basis
-	
-func apply_movement(delta: float) -> void:
-	var input_vec := get_input_vector() 
-	
-	if not can_move or input_vec == Vector2.ZERO:
-		velocity.x = 0.0
-		velocity.z = 0.0
-		return
-
-	
-	var z_forward = transform.basis.z
-
-	velocity.x = z_forward.x * move_speed * delta
-	velocity.z = z_forward.z * move_speed * delta
-
-
 var current_cam_yaw: float
 
-func look_at_dir() -> void:
-	var input_dir := get_input_vector()
-	var cam := get_viewport().get_camera_3d()
-
-	var cam_yaw: float = cam.global_transform.basis.get_euler().y
-	
-	if input_dir == Vector2.ZERO:
-		current_cam_yaw = cam_yaw
-		return
-	
+func get_camera_relative_dir(input_vec: Vector2) -> Vector3:
 	var forward := Vector3(
 		sin(current_cam_yaw),
 		0,
@@ -165,12 +128,39 @@ func look_at_dir() -> void:
 		-sin(current_cam_yaw)
 	)
 
-	var dir := right * -input_dir.x + forward * -input_dir.y
+	return (right * input_vec.x + forward * input_vec.y)
 
-	if dir.length() == 0:
+func apply_movement(delta: float) -> void:
+	var input_vec := get_input_vector()
+	var cam := get_viewport().get_camera_3d()
+	var cam_yaw := cam.global_transform.basis.get_euler().y
+
+	if not can_move or input_vec == Vector2.ZERO:
+		velocity.x = 0.0
+		velocity.z = 0.0
+		current_cam_yaw = cam_yaw
 		return
 
-	look_at(global_position + dir.normalized(), Vector3.UP)
+	var dir := get_camera_relative_dir(input_vec).normalized()
+
+	velocity.x = dir.x * move_speed * delta
+	velocity.z = dir.z * move_speed * delta
+
+func look_at_dir(delta: float) -> void:
+	var input_vec: Vector2 = get_input_vector()
+	var cam: Camera3D = get_viewport().get_camera_3d()
+	var cam_yaw := cam.global_transform.basis.get_euler().y
+	
+	if input_vec == Vector2.ZERO:
+		current_cam_yaw = cam_yaw
+		return
+	
+	var dir := get_camera_relative_dir(input_vec).normalized()
+
+	var target_yaw := atan2(dir.x, dir.z)
+
+	var speed := 10.0 
+	rotation.y = lerp_angle(rotation.y, target_yaw, speed * delta)
 
 func show_landing_pos(floor_ind: PositionIndicator) -> void:
 	if track_floor() != Vector3.INF and !is_on_floor():
@@ -185,40 +175,6 @@ func _physics_process(_delta: float) -> void:
 		move_speed = sprint_speed
 	else:
 		move_speed = base_speed
-
-
-func capture_mouse() -> void:
-	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
-	mouse_captured = true
-
-
-func release_mouse() -> void:
-	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
-	mouse_captured = false
-
-
-func check_input_mappings() -> void:
-	if can_move and not InputMap.has_action(input_left):
-		push_error("Movement disabled. No InputAction found for input_left: " + input_left)
-		can_move = false
-	if can_move and not InputMap.has_action(input_right):
-		push_error("Movement disabled. No InputAction found for input_right: " + input_right)
-		can_move = false
-	if can_move and not InputMap.has_action(input_forward):
-		push_error("Movement disabled. No InputAction found for input_forward: " + input_forward)
-		can_move = false
-	if can_move and not InputMap.has_action(input_back):
-		push_error("Movement disabled. No InputAction found for input_back: " + input_back)
-		can_move = false
-	if can_jump and not InputMap.has_action(input_jump):
-		push_error("Jumping disabled. No InputAction found for input_jump: " + input_jump)
-		can_jump = false
-	if can_sprint and not InputMap.has_action(input_sprint):
-		push_error("Sprinting disabled. No InputAction found for input_sprint: " + input_sprint)
-		can_sprint = false
-	if can_freefly and not InputMap.has_action(input_freefly):
-		push_error("Freefly disabled. No InputAction found for input_freefly: " + input_freefly)
-		can_freefly = false
 
 
 #region DASH
@@ -255,7 +211,7 @@ func start_dash() -> void:
 	dash_line_instance.top_level = true
 	
 	var direction = transform.basis.z
-	var horizontal_force = direction * dash_power
+	var horizontal_force = direction.normalized() * dash_power
 	
 	velocity.x = horizontal_force.x
 	velocity.z = horizontal_force.z
@@ -268,16 +224,12 @@ func stop_dash():
 	dash_point.top_level = false
 	dash_line_instance.top_level = false
 	
-	velocity.z = 0
-	velocity.x = 0
 
 	dash_point.hide()
 	dash_line_instance.hide()
 	
-	
 	dash_point.position = dash_point_pos
 
-	
 	dash_allowed = true
 
 @onready var dash_line_instance: MeshInstance3D = $DashLine
@@ -306,8 +258,6 @@ func draw_dotted_line(begin: Vector3, end: Vector3):
 		travelled_dist += segment_length + gap_length
 	
 	mesh.surface_end()
-
-
 
 #endregion
 

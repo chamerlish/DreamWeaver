@@ -30,11 +30,21 @@ func _exit(_next_state: State) -> void:
 	player.after_dash_gravity_timer.start()
 	
 	start_pos = Vector3.ZERO
-
-func _physics_update(_delta: float) -> void:
 	
-	player.move_and_slide()
+
+
+func _physics_update(delta: float) -> void:
+	var motion: Vector3 = player.velocity * delta
+	var collision: KinematicCollision3D = player.move_and_collide(motion)
+	
 	player.start_dash() 
+	
+	if collision:
+		var collider = collision.get_collider()
+		if collider.has_method("on_hit"):
+			collider.on_hit(player)
+			
+	
 	player.show_landing_pos(player.floor_indicator)
 	#if (player.global_position.distance_to(end_pos) <= 0.1
 	#	or player.is_on_wall()
@@ -43,6 +53,10 @@ func _physics_update(_delta: float) -> void:
 		
 	
 	if (start_pos.distance_to(player.global_position) >= player.dash_distance
-		or player.is_on_wall()
+		or collision
 	):
+		if collision:
+			var normal = collision.get_normal()
+
+			player.velocity = player.velocity.slide(normal)
 		switch_to("AirEntryState")

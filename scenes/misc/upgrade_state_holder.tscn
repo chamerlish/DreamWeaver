@@ -19,4 +19,9 @@ mesh = SubResource("SphereMesh_m65ma")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=2045672175]
 shape = SubResource("SphereShape3D_5eeil")
 
+[node name="OmniLight3D" type="OmniLight3D" parent="." unique_id=1461208116]
+light_color = Color(1, 0, 0, 1)
+omni_range = 9.631
+omni_attenuation = 3.275
+
 [connection signal="body_entered" from="." to="." method="_on_body_entered"]
