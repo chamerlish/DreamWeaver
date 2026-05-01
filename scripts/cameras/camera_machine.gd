@@ -17,7 +17,7 @@ func _ready() -> void:
 	rotation_curve = _create_rotation_curve()
 func _process(delta: float) -> void:
 	_update_camera(delta)
-func _update_camera(delta: float) -> void:
+func _update_camera(_delta: float) -> void:
 	if path_length <= 0.0:
 		return
 	closest_offset = path_curve.get_closest_offset(player_node.global_position)
@@ -57,8 +57,6 @@ func _create_rotation_curve() -> Curve3D:
 	var cameras: Array[CameraSwitchZone] = _get_sorted_cameras()
 	for i: int in range(cameras.size()):
 		var cam: CameraSwitchZone = cameras[i]
-		var offset: float = path_curve.get_closest_offset(cam.camera_node.global_position)
-		var normalized: float = offset / path_length
 		var target_pos: Vector3 = cam.camera_node.global_position + cam.camera_node.global_transform.basis.z * -1000.0
 		var in_tangent: Vector3 = Vector3.ZERO
 		var out_tangent: Vector3 = Vector3.ZERO
