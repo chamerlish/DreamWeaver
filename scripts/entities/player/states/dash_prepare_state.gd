@@ -53,3 +53,4 @@ func _physics_update(delta: float) -> void:
 			switch_to("DashState")
 		else:
 			switch_to("AirEntryState")
+			player.stop_dash()

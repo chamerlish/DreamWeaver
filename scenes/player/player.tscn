@@ -177,6 +177,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.419, 4.2340965)
 target_position = Vector3(0, -2, 0)
 
 [node name="PositionIndicator" parent="DashPoint" unique_id=627486979 instance=ExtResource("11_je7p5")]
-transform = Transform3D(0.96939045, 0, 0, 0, -4.23734e-08, -0.96939045, 0, 0.96939045, -4.23734e-08, 0, 0, 0)
+transform = Transform3D(0.93884254, 0, 0, 0, -4.103811e-08, -0.93884254, 0, 0.93884254, -4.103811e-08, 0, 0, 0)
 modulate = Color(0.56078434, 0, 0, 1)
 color = Color(0.56078434, 0, 0, 1)
